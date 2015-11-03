@@ -2,10 +2,9 @@
   ******************************************************************************
   * @file      startup_stm32l486xx.s
   * @author    MCD Application Team
-  * @version   V1.0.0
-  * @date      26-June-2015
-  * @brief     STM32L486xx devices vector table for Atollic 
-  *            TrueSTUDIO toolchain.
+  * @version   V1.0.1
+  * @date      16-September-2015
+  * @brief     STM32L486xx devices vector table for GCC toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,

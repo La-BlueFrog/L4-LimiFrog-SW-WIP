@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_pwr_ex.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Extended PWR HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Power Controller (PWR) peripheral:
@@ -56,6 +56,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define PWR_PORTH_AVAILABLE_PINS   (PWR_GPIO_BIT_0|PWR_GPIO_BIT_1)
+
 
 /** @defgroup PWR_Extended_Private_Defines PWR Extended Private Defines
   * @{
@@ -279,7 +281,7 @@ void HAL_PWREx_DisableInternalWakeUpLine(void)
 
 /**
   * @brief Enable GPIO pull-up state in Standby and Shutdown modes.
-  * @note  Set the relevant PUy bit of PWR_PUCRx register to configure the I/O in 
+  * @note  Set the relevant PUy bits of PWR_PUCRx register to configure the I/O in 
   *        pull-up state in Standby and Shutdown modes. 
   * @note  This state is effective in Standby and Shutdown modes only if APC bit 
   *        is set through HAL_PWREx_EnablePullUpPullDownConfig() API.
@@ -287,138 +289,88 @@ void HAL_PWREx_DisableInternalWakeUpLine(void)
   *        power-on reset, maintained when exiting the Standby mode. 
   * @note  To avoid any conflict at Standby and Shutdown modes exits, the corresponding
   *        PDy bit of PWR_PDCRx register is cleared unless it is reserved. 
-  * @note  The API returns HAL_ERROR when PUy bit is reserved.  
+  * @note  Even if a PUy bit to set is reserved, the other PUy bits entered as input 
+  *        parameter at the same time are set.     
   * @param  GPIO: Specify the IO port. This parameter can be PWR_GPIO_A, ..., PWR_GPIO_H 
   *         to select the GPIO peripheral.
   * @param  GPIONumber: Specify the I/O pins numbers.
-  *          This parameter can be one of the following values:
+  *         This parameter can be one of the following values:
   *         PWR_GPIO_BIT_0, ..., PWR_GPIO_BIT_15 (except for PORTH where less  
   *         I/O pins are available) or the logical OR of several of them to set 
   *         several bits for a given port in a single API call.    
   * @retval HAL Status
   */   
 HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
-{
-  uint32_t position = 0x00;
-  uint32_t gpiocurrent = 0x00;
-  
+{  
   assert_param(IS_PWR_GPIO(GPIO));
   assert_param(IS_PWR_GPIO_BIT_NUMBER(GPIONumber));
-  
-  while ((GPIONumber >> position) != RESET)
-  {
-    /* Get current gpio position */
-    gpiocurrent = (GPIONumber) & (1U << position);
-  
-    if (gpiocurrent)
-    {
+
   switch (GPIO)
   {
     case PWR_GPIO_A:
-           if (gpiocurrent == PWR_GPIO_BIT_14)
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-             SET_BIT(PWR->PUCRA, gpiocurrent);
-             if ((gpiocurrent != PWR_GPIO_BIT_13) && (gpiocurrent != PWR_GPIO_BIT_14))
-         { 
-               CLEAR_BIT(PWR->PDCRA, gpiocurrent);
-         }         
-       }    
+       SET_BIT(PWR->PUCRA, (GPIONumber & (~(PWR_GPIO_BIT_14))));
+       CLEAR_BIT(PWR->PDCRA, (GPIONumber & (~(PWR_GPIO_BIT_13|PWR_GPIO_BIT_15))));                       
        break;
     case PWR_GPIO_B:
-           SET_BIT(PWR->PUCRB, gpiocurrent);
-           if (gpiocurrent != PWR_GPIO_BIT_4)
-       { 
-              CLEAR_BIT(PWR->PDCRB, gpiocurrent);
-       }                
+       SET_BIT(PWR->PUCRB, GPIONumber);
+       CLEAR_BIT(PWR->PDCRB, (GPIONumber & (~(PWR_GPIO_BIT_4))));                  
        break; 
     case PWR_GPIO_C:
-           SET_BIT(PWR->PUCRC, gpiocurrent);
-           CLEAR_BIT(PWR->PDCRC, gpiocurrent);         
+       SET_BIT(PWR->PUCRC, GPIONumber);
+       CLEAR_BIT(PWR->PDCRC, GPIONumber);         
        break; 
     case PWR_GPIO_D:
-           SET_BIT(PWR->PUCRD, gpiocurrent);
-           CLEAR_BIT(PWR->PDCRD, gpiocurrent);         
+       SET_BIT(PWR->PUCRD, GPIONumber);
+       CLEAR_BIT(PWR->PDCRD, GPIONumber);         
        break;
     case PWR_GPIO_E:
-           SET_BIT(PWR->PUCRE, gpiocurrent);
-           CLEAR_BIT(PWR->PDCRE, gpiocurrent);         
+       SET_BIT(PWR->PUCRE, GPIONumber);
+       CLEAR_BIT(PWR->PDCRE, GPIONumber);         
        break;
     case PWR_GPIO_F:
-           SET_BIT(PWR->PUCRF, gpiocurrent);
-           CLEAR_BIT(PWR->PDCRF, gpiocurrent);         
+       SET_BIT(PWR->PUCRF, GPIONumber);
+       CLEAR_BIT(PWR->PDCRF, GPIONumber);         
        break;
     case PWR_GPIO_G:
-           SET_BIT(PWR->PUCRG, gpiocurrent);
-           CLEAR_BIT(PWR->PDCRG, gpiocurrent);         
+       SET_BIT(PWR->PUCRG, GPIONumber);
+       CLEAR_BIT(PWR->PDCRG, GPIONumber);         
        break;
     case PWR_GPIO_H:
-       if ((gpiocurrent != PWR_GPIO_BIT_0) && (gpiocurrent != PWR_GPIO_BIT_1))
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-             SET_BIT(PWR->PUCRH, gpiocurrent);
-             CLEAR_BIT(PWR->PDCRH, gpiocurrent);           
-       }
+       SET_BIT(PWR->PUCRH, (GPIONumber & PWR_PORTH_AVAILABLE_PINS));
+       CLEAR_BIT(PWR->PDCRH, (GPIONumber & PWR_PORTH_AVAILABLE_PINS));           
        break;                                                   
-   default:
-       return HAL_ERROR;
+    default:
+        return HAL_ERROR;
   }
-    } /* if (gpiocurrent) */
-    
-    position++;
-    
-  } /* while (GPIONumber >> position) */
-    
+       
   return HAL_OK;
 }
 
 
 /**
   * @brief Disable GPIO pull-up state in Standby mode and Shutdown modes.
-  * @note  Reset the relevant PUy bit of PWR_PUCRx register used to configure the I/O
+  * @note  Reset the relevant PUy bits of PWR_PUCRx register used to configure the I/O
   *        in pull-up state in Standby and Shutdown modes.
-  * @note  The API returns HAL_ERROR when PUy bit is reserved.    
+  * @note  Even if a PUy bit to reset is reserved, the other PUy bits entered as input 
+  *        parameter at the same time are reset.      
   * @param  GPIO: Specifies the IO port. This parameter can be PWR_GPIO_A, ..., PWR_GPIO_H 
   *         to select the GPIO peripheral.
   * @param  GPIONumber: Specify the I/O pins numbers.
-  *          This parameter can be one of the following values:
+  *         This parameter can be one of the following values:
   *         PWR_GPIO_BIT_0, ..., PWR_GPIO_BIT_15 (except for PORTH where less  
   *         I/O pins are available) or the logical OR of several of them to reset 
   *         several bits for a given port in a single API call. 
   * @retval HAL Status
   */   
 HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
-{
-  uint32_t position = 0x00;
-  uint32_t gpiocurrent = 0x00;
-  
+{  
   assert_param(IS_PWR_GPIO(GPIO));
   assert_param(IS_PWR_GPIO_BIT_NUMBER(GPIONumber));
   
-  while ((GPIONumber >> position) != RESET)
-  {
-    /* Get current gpio position */
-    gpiocurrent = (GPIONumber) & (1U << position);
-  
-    if (gpiocurrent)
-    {  
   switch (GPIO)
   {
     case PWR_GPIO_A:
-       if (GPIONumber == PWR_GPIO_BIT_14)
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         CLEAR_BIT(PWR->PUCRA, GPIONumber);      
-       }     
+       CLEAR_BIT(PWR->PUCRA, (GPIONumber & (~(PWR_GPIO_BIT_14))));         
        break;
     case PWR_GPIO_B:
        CLEAR_BIT(PWR->PUCRB, GPIONumber);
@@ -439,24 +391,12 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
        CLEAR_BIT(PWR->PUCRG, GPIONumber);
        break;
     case PWR_GPIO_H:
-       if ((gpiocurrent != PWR_GPIO_BIT_0) && (gpiocurrent != PWR_GPIO_BIT_1))
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         CLEAR_BIT(PWR->PUCRH, GPIONumber);
-       }
+       CLEAR_BIT(PWR->PUCRH, (GPIONumber & PWR_PORTH_AVAILABLE_PINS));
        break;                                                   
-   default:
-       return HAL_ERROR;
+    default:
+        return HAL_ERROR;
   }
-    } /* if (gpiocurrent) */
-    
-    position++;
-    
-  } /* while (GPIONumber >> position) */      
-    
+       
   return HAL_OK;
 }
 
@@ -464,7 +404,7 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
 
 /**
   * @brief Enable GPIO pull-down state in Standby and Shutdown modes.
-  * @note  Set the relevant PDy bit of PWR_PDCRx register to configure the I/O in 
+  * @note  Set the relevant PDy bits of PWR_PDCRx register to configure the I/O in 
   *        pull-down state in Standby and Shutdown modes. 
   * @note  This state is effective in Standby and Shutdown modes only if APC bit
   *        is set through HAL_PWREx_EnablePullUpPullDownConfig() API. 
@@ -472,11 +412,12 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
   *        power-on reset, maintained when exiting the Standby mode. 
   * @note  To avoid any conflict at Standby and Shutdown modes exits, the corresponding
   *        PUy bit of PWR_PUCRx register is cleared unless it is reserved. 
-  * @note  The API returns HAL_ERROR when PDy bit is reserved.        
+  * @note  Even if a PDy bit to set is reserved, the other PDy bits entered as input 
+  *        parameter at the same time are set.         
   * @param  GPIO: Specify the IO port. This parameter can be PWR_GPIO_A..PWR_GPIO_H 
   *         to select the GPIO peripheral.
   * @param  GPIONumber: Specify the I/O pins numbers.
-  *          This parameter can be one of the following values:
+  *         This parameter can be one of the following values:
   *         PWR_GPIO_BIT_0, ..., PWR_GPIO_BIT_15 (except for PORTH where less  
   *         I/O pins are available) or the logical OR of several of them to set 
   *         several bits for a given port in a single API call. 
@@ -484,45 +425,18 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
   */   
 HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  uint32_t position = 0x00;
-  uint32_t gpiocurrent = 0x00;
-  
   assert_param(IS_PWR_GPIO(GPIO));
   assert_param(IS_PWR_GPIO_BIT_NUMBER(GPIONumber));
   
-  while ((GPIONumber >> position) != RESET)
-  {
-    /* Get current gpio position */
-    gpiocurrent = (GPIONumber) & (1U << position);
-  
-    if (gpiocurrent)
-    {  
   switch (GPIO)
-  {
+  { 
     case PWR_GPIO_A:
-       if ((GPIONumber == PWR_GPIO_BIT_13) || (GPIONumber == PWR_GPIO_BIT_15))
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         SET_BIT(PWR->PDCRA, GPIONumber);
-         if (GPIONumber != PWR_GPIO_BIT_14)
-         {         
-           CLEAR_BIT(PWR->PUCRA, GPIONumber);        
-         } 
-       }    
+       SET_BIT(PWR->PDCRA, (GPIONumber & (~(PWR_GPIO_BIT_13|PWR_GPIO_BIT_15))));        
+       CLEAR_BIT(PWR->PUCRA, (GPIONumber & (~(PWR_GPIO_BIT_14))));           
        break;
     case PWR_GPIO_B:
-       if (GPIONumber == PWR_GPIO_BIT_4)
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         SET_BIT(PWR->PDCRB, GPIONumber);
-         CLEAR_BIT(PWR->PUCRB, GPIONumber);         
-       }           
+       SET_BIT(PWR->PDCRB, (GPIONumber & (~(PWR_GPIO_BIT_4))));
+       CLEAR_BIT(PWR->PUCRB, GPIONumber);                    
        break; 
     case PWR_GPIO_C:
        SET_BIT(PWR->PDCRC, GPIONumber);
@@ -545,38 +459,27 @@ HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
        CLEAR_BIT(PWR->PUCRG, GPIONumber);        
        break;
     case PWR_GPIO_H:
-       if ((gpiocurrent != PWR_GPIO_BIT_0) && (gpiocurrent != PWR_GPIO_BIT_1))
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         SET_BIT(PWR->PDCRH, GPIONumber);
-         CLEAR_BIT(PWR->PUCRH, GPIONumber);          
-       }
+       SET_BIT(PWR->PDCRH, (GPIONumber & PWR_PORTH_AVAILABLE_PINS));
+       CLEAR_BIT(PWR->PUCRH, (GPIONumber & PWR_PORTH_AVAILABLE_PINS));          
        break;                                                   
-   default:
-       return HAL_ERROR;
+    default:
+        return HAL_ERROR;
   }
-    } /* if (gpiocurrent) */
-    
-    position++;
-    
-  } /* while (GPIONumber >> position) */      
-    
+       
   return HAL_OK;
 }
 
 
 /**
   * @brief Disable GPIO pull-down state in Standby and Shutdown modes.
-  * @note  Reset the relevant PDy bit of PWR_PDCRx register used to configure the I/O
+  * @note  Reset the relevant PDy bits of PWR_PDCRx register used to configure the I/O
   *        in pull-down state in Standby and Shutdown modes. 
-  * @note  The API returns HAL_ERROR when PDy bit is reserved.  
+  * @note  Even if a PDy bit to reset is reserved, the other PDy bits entered as input 
+  *        parameter at the same time are reset.   
   * @param  GPIO: Specifies the IO port. This parameter can be PWR_GPIO_A..PWR_GPIO_H 
   *         to select the GPIO peripheral.
   * @param  GPIONumber: Specify the I/O pins numbers.
-  *          This parameter can be one of the following values:
+  *         This parameter can be one of the following values:
   *         PWR_GPIO_BIT_0, ..., PWR_GPIO_BIT_15 (except for PORTH where less  
   *         I/O pins are available) or the logical OR of several of them to reset 
   *         several bits for a given port in a single API call. 
@@ -584,40 +487,16 @@ HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
   */   
 HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  uint32_t position = 0x00;
-  uint32_t gpiocurrent = 0x00;
-  
   assert_param(IS_PWR_GPIO(GPIO));
   assert_param(IS_PWR_GPIO_BIT_NUMBER(GPIONumber));
-  
-  while ((GPIONumber >> position) != RESET)
-  {
-    /* Get current gpio position */
-    gpiocurrent = (GPIONumber) & (1U << position);
-  
-    if (gpiocurrent)
-    {  
+   
   switch (GPIO)
   {
     case PWR_GPIO_A:
-       if ((GPIONumber == PWR_GPIO_BIT_13) || (GPIONumber == PWR_GPIO_BIT_15))
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         CLEAR_BIT(PWR->PDCRA, GPIONumber);       
-       }      
+       CLEAR_BIT(PWR->PDCRA, (GPIONumber & (~(PWR_GPIO_BIT_13|PWR_GPIO_BIT_15))));                        
        break;
     case PWR_GPIO_B:
-       if (GPIONumber == PWR_GPIO_BIT_4)
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         CLEAR_BIT(PWR->PDCRB, GPIONumber);      
-       }      
+       CLEAR_BIT(PWR->PDCRB, (GPIONumber & (~(PWR_GPIO_BIT_4))));           
        break; 
     case PWR_GPIO_C:
        CLEAR_BIT(PWR->PDCRC, GPIONumber);
@@ -635,24 +514,12 @@ HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumb
        CLEAR_BIT(PWR->PDCRG, GPIONumber);
        break;
     case PWR_GPIO_H:
-       if ((gpiocurrent != PWR_GPIO_BIT_0) && (gpiocurrent != PWR_GPIO_BIT_1))
-       {
-         return HAL_ERROR;
-       }
-       else
-       {
-         CLEAR_BIT(PWR->PDCRH, GPIONumber);
-       }
+      CLEAR_BIT(PWR->PDCRH, (GPIONumber & PWR_PORTH_AVAILABLE_PINS));
        break;                                                   
-   default:
-       return HAL_ERROR;
+    default:
+        return HAL_ERROR;
   }
-    } /* if (gpiocurrent) */
-    
-    position++;
-    
-  } /* while (GPIONumber >> position) */      
-    
+       
   return HAL_OK;
 }
 

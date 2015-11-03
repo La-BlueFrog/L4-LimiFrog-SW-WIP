@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.0.1
+  * @date    16-September-2015
   * @brief   CMSIS STM32L4xx Device Peripheral Access Layer Header File.
   *
   *          The file is the unique include file that the application programmer
@@ -45,12 +45,6 @@
   ******************************************************************************
   */
 
-/* ========================================================================== */
-/* --       Edited ST's version for LimiFrog                     ------- */
-/* --       considering the processor is fixed (STM32L476)          ------- */
-/* --       and we do use HAL Library                                 ------- */
-/* ========================================================================== */
-
 /** @addtogroup CMSIS
   * @{
   */
@@ -74,15 +68,19 @@
   * @brief STM32 Family
   */
 #if !defined (STM32L4)
-  #define STM32L4
+#define STM32L4
 #endif /* STM32L4 */
 
 /* Uncomment the line below according to the target STM32L4 device used in your
    application
   */
 
-#if!defined (STM32L476xx) 
-  #define STM32L476xx   /*!< STM32L476xx Devices */
+#if !defined (STM32L471xx) && !defined (STM32L475xx) && !defined (STM32L476xx) && !defined (STM32L485xx) && !defined (STM32L486xx)
+  /* #define STM32L471xx */   /*!< STM32L471xx Devices */
+  /* #define STM32L475xx */   /*!< STM32L475xx Devices */
+  /* #define STM32L476xx */   /*!< STM32L476xx Devices */
+  /* #define STM32L485xx */   /*!< STM32L485xx Devices */
+  /* #define STM32L486xx */   /*!< STM32L486xx Devices */
 #endif
 
 /*  Tip: To avoid modifying this file each time you need to switch between these
@@ -94,15 +92,15 @@
    In this case, these drivers will not be included and the application code will
    be based on direct access to peripherals registers
    */
-  #define USE_HAL_DRIVER 
+  /*#define USE_HAL_DRIVER */
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V1.0.0
+  * @brief CMSIS Device version number V1.0.1
   */
 #define __STM32L4xx_CMSIS_DEVICE_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __STM32L4xx_CMSIS_DEVICE_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version */
-#define __STM32L4xx_CMSIS_DEVICE_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
+#define __STM32L4xx_CMSIS_DEVICE_VERSION_SUB2   (0x01) /*!< [15:8]  sub2 version */
 #define __STM32L4xx_CMSIS_DEVICE_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32L4xx_CMSIS_DEVICE_VERSION        ((__CMSIS_DEVICE_VERSION_MAIN << 24)\
                                                 |(__CMSIS_DEVICE_VERSION_SUB1 << 16)\
@@ -117,8 +115,16 @@
   * @{
   */
 
-#if defined(STM32L476xx)
-  #include "stm32l476xx.h"	 /**** THIS ONE  ***********/
+#if defined(STM32L471xx)
+  #include "stm32l471xx.h"
+#elif defined(STM32L475xx)
+  #include "stm32l475xx.h"
+#elif defined(STM32L476xx)
+  #include "stm32l476xx.h"
+#elif defined(STM32L485xx)
+  #include "stm32l485xx.h"
+#elif defined(STM32L486xx)
+  #include "stm32l486xx.h"
 #else
  #error "Please select first the target STM32L4xx device used in your application (in stm32l4xx.h file)"
 #endif
@@ -178,12 +184,9 @@ typedef enum
   * @}
   */
 
-/***** REMOVED XC  (recursive call...)
 #if defined (USE_HAL_DRIVER)
  #include "stm32l4xx_hal.h"
-#endif 
-***/
-
+#endif /* USE_HAL_DRIVER */
 
 #ifdef __cplusplus
 }

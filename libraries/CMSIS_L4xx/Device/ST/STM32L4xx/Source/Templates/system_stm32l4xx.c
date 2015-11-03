@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    system_stm32l4xx.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.0.1
+  * @date    16-September-2015
   * @brief   CMSIS Cortex-M4 Device Peripheral Access Layer System Source File
   *
   *   This file provides two functions and one global variable to be called from
@@ -292,11 +292,11 @@ void SystemCoreClockUpdate(void)
       SystemCoreClock = msirange;
       break;
 
-    case 0x04:  /* HSI used as system clock  source */
+    case 0x04:  /* HSI used as system clock source */
       SystemCoreClock = HSI_VALUE;
       break;
 
-    case 0x08:  /* HSE used as system clock  source */
+    case 0x08:  /* HSE used as system clock source */
       SystemCoreClock = HSE_VALUE;
       break;
 
@@ -305,27 +305,24 @@ void SystemCoreClockUpdate(void)
          SYSCLK = PLL_VCO / PLLR
          */
       pllsource = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC);
-      pllm = ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM)>> 4) + 1 ;
+      pllm = ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> 4) + 1 ;
 
       switch (pllsource)
       {
-        case 0x00:  /* MSI used as PLL clock source */
-          pllvco = (msirange / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 8);
+        case 0x02:  /* HSI used as PLL clock source */
+          pllvco = (HSI_VALUE / pllm);
           break;
 
-        case 0x01:  /* HSI used as PLL clock source */
-          pllvco = (msirange / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 8);
+        case 0x03:  /* HSE used as PLL clock source */
+          pllvco = (HSE_VALUE / pllm);
           break;
 
-        case 0x02:  /* HSE used as PLL clock source */
-          pllvco = (msirange / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 8);
-          break;
-
-        default:
-          pllvco = (msirange / pllm) * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 8);
+        default:    /* MSI used as PLL clock source */
+          pllvco = (msirange / pllm);
           break;
       }
-      pllr = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >>25) + 1 ) *2;
+      pllvco = pllvco * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 8);
+      pllr = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >> 25) + 1) * 2;
       SystemCoreClock = pllvco/pllr;
       break;
 

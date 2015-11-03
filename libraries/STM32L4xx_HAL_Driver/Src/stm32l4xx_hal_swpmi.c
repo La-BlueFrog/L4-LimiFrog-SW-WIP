@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_swpmi.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   SWPMI HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Single Wire Protocol Master Interface (SWPMI).
@@ -1089,6 +1089,10 @@ uint32_t HAL_SWPMI_GetError(SWPMI_HandleTypeDef *hswpmi)
   * @}
   */
 
+/**
+  * @}
+  */
+
 /* Private functions ---------------------------------------------------------*/
 
 /** @defgroup SWPMI_Private_Functions SWPMI Private Functions
@@ -1385,10 +1389,6 @@ static HAL_StatusTypeDef SWPMI_WaitOnFlagSetUntilTimeout(SWPMI_HandleTypeDef *hs
 
   return status;
 }
-
-/**
-  * @}
-  */
 
 /**
   * @}

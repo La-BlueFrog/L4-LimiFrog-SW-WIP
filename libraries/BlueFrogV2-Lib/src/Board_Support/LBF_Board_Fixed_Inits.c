@@ -77,6 +77,7 @@ static void HAL_Init_Private(void);
 void LBF_Board_Fixed_Inits(void) 
 {
 
+
 /* -------- Configure eFlash Prefetch,        ---------------- */
 /* --       Init and launch SysTick time base ---------------- */
 /* --       Set NVIC for pre-emption only (no sub-prio)    --- */
@@ -92,7 +93,6 @@ void LBF_Board_Fixed_Inits(void)
      LBF_SysClkCfg();  
 
 
-
 /* --------  STM32 IO Configuration  ------------------------  */
 
     /* First, enable GPIO clocks */
@@ -100,7 +100,6 @@ void LBF_Board_Fixed_Inits(void)
      __GPIOB_CLK_ENABLE();
      __GPIOC_CLK_ENABLE();
      __GPIOD_CLK_ENABLE();
-
 
 				// PB6, PC0, PC2, PC13
      LBF_PWR_IOcfg();  		// PMIC IO interfacing
@@ -111,7 +110,7 @@ void LBF_Board_Fixed_Inits(void)
 
 
 				// USART2 - PA2, PA3, PA4
-     LBF_USART2_IOcfg();   	// interfacing with: OLED
+     LBF_USART2_IOcfg();   	// back-up interfacing with: OLED
 
 
 				// SPI1 - Pins PA5, PA6, PA7 (excl. nCS)
@@ -162,13 +161,12 @@ void LBF_Board_Fixed_Inits(void)
      // PC14/PC15=Xtal 32KHz; PH0/PH1_Osc_In/Out=8MHz
 
 
-
 /* -------- On-Chip Peripheral Inits  -----------------------  */  
     
 
     /* Always-enabled peripherals : */
 
-     LBF_SPI1_Init();  // used by OLED as back-up alternative to USART
+     LBF_SPI1_Init();  // used by OLED 
 
      LBF_SPI3_Init();  // used by DataFlash
 
@@ -181,12 +179,23 @@ void LBF_Board_Fixed_Inits(void)
 // TBD: USART2 (OLED / ext conn)
 
 
-
 /* --------  Inits required by other on-board chips   ----------  */
 
 
      LBF_FLASH_Init();    // ADESTO Data Flash
  
+
+/* --------        ???!!?????????     ----------  */
+/* -- It appears the following helps USB device to work (else not recognized by PC)    --  */
+/* -- Why ????  No idea at this point  :-(                     --  */
+/* volatile uint32_t HClkFqcy, APB1ClkFqcy, APB2ClkFqcy ;
+    HClkFqcy = HAL_RCC_GetHCLKFreq();  //NEEDED
+    APB1ClkFqcy = HAL_RCC_GetPCLK1Freq(); //NEEDED
+    APB2ClkFqcy = HAL_RCC_GetPCLK2Freq(); // NEEDED
+    // NB: variables declared as volatile so that compiler does not skip 
+    // those lines when realizing result is not used anyway
+*/
+
 
 }
 
@@ -213,9 +222,29 @@ void LBF_Board_Fixed_Inits(void)
 void HAL_Init_Private(void) 
 {
 
-#if (PREFETCH_ENABLE != 0)   
-     __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
-#endif
+  /* Configure Flash prefetch, Instruction cache, Data cache */
+  /* Default configuration at reset is:                      */
+  /* - Prefetch disabled                                     */
+  /* - Instruction cache enabled                             */
+  /* - Data cache enabled                                    */
+
+#if (INSTRUCTION_CACHE_ENABLE == 0)
+   __HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
+#endif /* INSTRUCTION_CACHE_ENABLE */
+
+#if (DATA_CACHE_ENABLE == 0)
+   __HAL_FLASH_DATA_CACHE_DISABLE();
+#endif /* DATA_CACHE_ENABLE */
+
+#if (PREFETCH_ENABLE != 0)
+  __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+#endif /* PREFETCH_ENABLE */
+
+
+//     __SYSCFG_CLK_ENABLE();
+// Don't call it here, else USB will not work (...why ???!?)
+// Keep it in LBF_SysClkCfg
+
 
      HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
      	    // Leads to 4 bits to define preemption priority 

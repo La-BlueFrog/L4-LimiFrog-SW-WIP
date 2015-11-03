@@ -99,6 +99,7 @@ boolean_t	ConstantLed = TRUE;
     while(1) 
     {   
 	LBF_Led_ON();
+
         LBF_Delay_ms(100);
 
         if (ConstantLed==FALSE)  

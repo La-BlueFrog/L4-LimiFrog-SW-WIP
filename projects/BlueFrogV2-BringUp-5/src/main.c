@@ -58,7 +58,7 @@ boolean_t  Success = TRUE;
 
     /* ... To use La BlueFrog as USB Mass Storage (Full Speed)      */
     // LBF_Delay_ms(1000);
-    // Success &= LBF_LaunchUSB_MassStorage();
+//    Success &= LBF_LaunchUSB_MassStorage();
  
     /* ... To initialize FatFS                                      */
     /*     and mount the Data Flash as FAT File System              */

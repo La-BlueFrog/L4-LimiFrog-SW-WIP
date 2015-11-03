@@ -40,8 +40,10 @@ void LBF_Delay_ms (uint32_t nTime)
  **************************************************************/
 {
     // Use Timer5 ( a 16-bit timer, not usable on external pins) with 1ms resolution- 
-    LBF_Timer_Setup( TIMER5, TIMER_UNIT_MS, 0xFFFF);  
+//    LBF_Timer_Setup( TIMER5, TIMER_UNIT_MS, 0xFFFF);  
 	//Counter wrap around at max value
+    LBF_Timer_Setup( TIMER5, TIMER_UNIT_MS, 0x7FFF);  
+
 
     // Start timer5 (no IT)
     HAL_TIM_Base_Start(&htim5);

@@ -44,19 +44,22 @@ BlueFrogV2-BringUp-2/BriefDesc.txt
 ==========================================
 BlueFrogV2-BringUp-3/BriefDesc.txt
 =====================
-** USB Device Test (Mass Storage) **
+** Clock Frequencies & USB Device Test (Mass Storage) **
 ==========================================
 
 Initialize board
-
 Configure board as Mass Storage Device (8MB)
 USB Device Stack runs on STM32, Physical Storage space is Data Flash
 
-La BlueFrog gets recognized by PC as USB Mass Storage drive.
+LimiFrog gets recognized by PC as USB Mass Storage drive.
+
+LimiFrog displays current frequencies of Core Clock (HCLK) and Peripheral Clocks 1 and 2 (PCLK1 and PCLK2).
+
 
 **Limitation**: if Flash is not empty and not FAT formatted, PC OS reports abnormal disk behavior.
 
 If Flash is empty/erased, then PC proposes to format the drive (FAT16)
+
 
 
 4-
@@ -67,7 +70,7 @@ BlueFrogV2-BringUp-4/BriefDesc.txt
 ==========================================
 
 ** NOTE **:
-La BLueFrog must have been formatted as FAT file system first !
+LimiFrog must have been formatted as FAT file system first !
 for example by plugging into Windows PC while USB firmware is running
 (if Flash is empty PC will offer to format disk)
 or by using BlueFrogV2-FatFS-FORMAT
@@ -128,7 +131,7 @@ Initialize Module, Enable USB
 With BTLE enabled in user configuration file,
  LBF_Board_Selective_Inits() will include download by STM32 of specified executable into BTLE module.
 
-Upon pressing switch 1 (side-push button), La BLueFrog sends a text message over BTLE.
+Upon pressing switch 1 (side-push button), LimiFrog sends a text message over BTLE.
 This can be read on ad-hoc iOS or Android application.
 
 

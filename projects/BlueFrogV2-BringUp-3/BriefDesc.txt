@@ -1,0 +1,18 @@
+Clock Frequencies & USB Device Test (Mass Storage)
+=================================================
+
+Initialize board
+
+Configure board as Mass Storage Device (8MB)
+USB Device Stack runs on STM32, Physical Storage space is Data Flash
+
+LimiFrog gets recognized by PC as USB Mass Storage drive.
+
+LimiFrog displays current frequencies of Core Clock (HCLK) and Peripheral Clocks 1 and 2 (PCLK1 and PCLK2).
+
+
+**Limitation**: if Flash is not empty and not FAT formatted, PC OS reports abnormal disk behavior.
+
+If Flash is empty/erased, then PC proposes to format the drive (FAT16)
+
+

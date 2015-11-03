@@ -45,6 +45,8 @@ void LBF_SPI3_Init(void)
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
   hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+	// SPI3 is on APB1 in STM32L4 which is clocked at 20MHz
+	// Leads to baudrate = APB2CLK/1 = 10 Mbit/s
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLED;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;

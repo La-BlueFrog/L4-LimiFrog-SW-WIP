@@ -2,16 +2,15 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_dma.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   DMA HAL module driver.
+  *    
   *         This file provides firmware functions to manage the following
   *         functionalities of the Direct Memory Access (DMA) peripheral:
-  *           + Initialization/de-initialization functions
-  *           + I/O operation functions
+  *           + Initialization and de-initialization functions
+  *           + IO operation functions
   *           + Peripheral State and errors functions
-  *
-  *
   @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -27,6 +26,12 @@
        Circular or Normal mode, Channel Priority level, Source and Destination Increment mode
        using HAL_DMA_Init() function.
 
+   (#) Use HAL_DMA_GetState() function to return the DMA state and HAL_DMA_GetError() in case of error 
+       detection.
+                    
+   (#) Use HAL_DMA_Abort() function to abort the current transfer
+                   
+     -@-   In Memory-to-Memory transfer mode, Circular mode is not allowed.
      *** Polling mode IO operation ***
      =================================
     [..]
@@ -48,13 +53,21 @@
               add his own function by customization of function pointer XferCpltCallback and
               XferErrorCallback (i.e. a member of DMA handle structure).
 
+     *** DMA HAL driver macros list ***
+     ============================================= 
       [..]
-     (#) Use HAL_DMA_GetState() function to return the DMA state and HAL_DMA_GetError() in case of error
-         detection.
+       Below the list of most used macros in DMA HAL driver.
 
-     (#) Use HAL_DMA_Abort() function to abort the current transfer
+       (+) __HAL_DMA_ENABLE: Enable the specified DMA Channel.
+       (+) __HAL_DMA_DISABLE: Disable the specified DMA Channel.
+       (+) __HAL_DMA_GET_FLAG: Get the DMA Channel pending flags.
+       (+) __HAL_DMA_CLEAR_FLAG: Clear the DMA Channel pending flags.
+       (+) __HAL_DMA_ENABLE_IT: Enable the specified DMA Channel interrupts.
+       (+) __HAL_DMA_DISABLE_IT: Disable the specified DMA Channel interrupts.
+       (+) __HAL_DMA_GET_IT_SOURCE: Check whether the specified DMA Channel interrupt has occurred or not. 
 
-     -@-   In Memory-to-Memory transfer mode, Circular mode is not allowed.
+     [..] 
+      (@) You can refer to the DMA HAL driver header file for more useful macros  
 
   @endverbatim
   ******************************************************************************
@@ -111,7 +124,7 @@
   * @}
   */
 
-/* Private macros ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /** @defgroup DMA_Private_Functions DMA Private Functions
@@ -122,29 +135,33 @@ static void DMA_SetConfig(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, uint32_t
   * @}
   */
 
-/* Exported functions -------------------------------------------------------*/
+/* Exported functions ---------------------------------------------------------*/
 
 /** @defgroup DMA_Exported_Functions DMA Exported Functions
   * @{
   */
 
-/** @defgroup DMA_Exported_Functions_Group1 Initialization/de-initialization functions
- *  @brief   Initialization/de-initialization functions
+/** @defgroup DMA_Exported_Functions_Group1 Initialization and de-initialization functions
+ *  @brief   Initialization and de-initialization functions 
  *
 @verbatim
  ===============================================================================
              ##### Initialization and de-initialization functions  #####
  ===============================================================================
-    [..]  This section provides functions allowing to:
-      (+) Initialize and configure the DMA
-      (+) De-Initialize the DMA
+    [..]
+    This section provides functions allowing to initialize the DMA Channel source
+    and destination addresses, incrementation and data sizes, transfer direction, 
+    circular/normal mode selection, memory-to-memory mode selection and Channel priority value.
+    [..]
+    The HAL_DMA_Init() function follows the DMA configuration procedures as described in
+    reference manual.  
 
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  Initializes the DMA according to the specified
+  * @brief  Initialize the DMA according to the specified
   *         parameters in the DMA_InitTypeDef and initialize the associated handle.
   * @param  hdma: Pointer to a DMA_HandleTypeDef structure that contains
   *               the configuration information for the specified DMA Channel.
@@ -328,7 +345,7 @@ HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  DeInitialize the DMA peripheral 
+  * @brief  DeInitialize the DMA peripheral.
   * @param  hdma: pointer to a DMA_HandleTypeDef structure that contains
   *               the configuration information for the specified DMA Channel.
   * @retval HAL status
@@ -479,7 +496,7 @@ HAL_StatusTypeDef HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
   */
 
 /**
-  * @brief  Starts the DMA Transfer.
+  * @brief  Start the DMA Transfer.
   * @param  hdma: pointer to a DMA_HandleTypeDef structure that contains
   *               the configuration information for the specified DMA Channel.
   * @param  SrcAddress: The source memory Buffer address
@@ -548,7 +565,7 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
 }
 
 /**
-  * @brief  Aborts the DMA Transfer.
+  * @brief  Abort the DMA Transfer.
   * @param  hdma: pointer to a DMA_HandleTypeDef structure that contains
   *               the configuration information for the specified DMA Channel.
   *                   
@@ -566,7 +583,7 @@ HAL_StatusTypeDef HAL_DMA_Abort(DMA_HandleTypeDef *hdma)
   /* Disable the channel */
   __HAL_DMA_DISABLE(hdma);
 
-  /* Get timeout */
+  /* Get tick */
   tickstart = HAL_GetTick();
 
   /* Check if the DMA Channel is effectively disabled */
@@ -621,7 +638,7 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, uint32_t Comp
     temp = __HAL_DMA_GET_HT_FLAG_INDEX(hdma);
   }
 
-  /* Get timeout */
+  /* Get tick */
   tickstart = HAL_GetTick();
 
   while(__HAL_DMA_GET_FLAG(hdma, temp) == RESET)
@@ -630,6 +647,9 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, uint32_t Comp
     {
       /* Clear the transfer error flags */
       __HAL_DMA_CLEAR_FLAG(hdma, __HAL_DMA_GET_TE_FLAG_INDEX(hdma));
+
+      /* Update error code */
+      SET_BIT(hdma->ErrorCode, HAL_DMA_ERROR_TE);
 
       /* Change the DMA state */
       hdma->State= HAL_DMA_STATE_ERROR;
@@ -683,7 +703,7 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, uint32_t Comp
 }
 
 /**
-  * @brief  Handles DMA interrupt request.
+  * @brief  Handle DMA interrupt request.
   * @param  hdma: pointer to a DMA_HandleTypeDef structure that contains
   *               the configuration information for the specified DMA Channel.
   * @retval None
@@ -795,7 +815,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
   */
 
 /**
-  * @brief  Returns the DMA hande state.
+  * @brief  Return the DMA hande state.
   * @param  hdma: pointer to a DMA_HandleTypeDef structure that contains
   *               the configuration information for the specified DMA Channel.
   * @retval HAL state
@@ -807,7 +827,7 @@ HAL_DMA_StateTypeDef HAL_DMA_GetState(DMA_HandleTypeDef *hdma)
 }
 
 /**
-  * @brief  Return the DMA error code
+  * @brief  Return the DMA error code.
   * @param  hdma : pointer to a DMA_HandleTypeDef structure that contains
   *              the configuration information for the specified DMA Channel.
   * @retval DMA Error Code

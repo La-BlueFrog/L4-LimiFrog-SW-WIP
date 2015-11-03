@@ -41,10 +41,10 @@
 
 
 
-#define	__SysTick_IRQn_PRIO	0x4
-// as is used in Delay function, level must be such that it pre-empts any ISR that use Delay_ms()
+#define	__SysTick_IRQn_PRIO	0xF
+// if used in Delay function, level must be such that it pre-empts any ISR that use Delay_ms()
 
-#define __USB_LP_IRQn_PRIO	0x7
+#define __OTG_FS_IRQn_PRIO	0x7
 // was originally hard-coded to 0x7 by ST in reference usbd_conf.c
 
 // External Interrupts 

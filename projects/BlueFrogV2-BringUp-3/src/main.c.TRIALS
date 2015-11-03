@@ -1,0 +1,165 @@
+/*******************************************************************************
+ * main.c
+ *
+ * Author: La BlueFrog, 2015
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * 
+ *************************************************************************/
+
+
+#include "LBF_Global.h"
+#include "User_Configuration.h"
+
+
+/*******************************************************************************
+* Function Name  : main.
+* Description    : Main routine.
+* Input          : None.
+* Output         : None.
+* Return         : None.
+*******************************************************************************/
+int main(void)
+{
+
+uint32_t  TimeStart, TimeStop; // !!!!!!! DEBUG
+
+boolean_t  Success = TRUE;
+
+/* ================================================================ */
+/* Board Initializations and Configurations except OLED             */
+/* (clocks, I/Os, on-chip peripherals, on-board ICs)                */
+/* ================================================================ */
+
+   LBF_Board_Fixed_Inits();
+   LBF_Board_Selective_Inits(); 
+             // actions driven by User_Configuration.h
+
+   LBF_Led_ON();
+
+/* ================================================================ */
+/* Optional initialization of Middleware libraries :                */
+/* USBD drivers, FatFS File System, STemWin GUI                     */
+/* ================================================================ */
+
+    // UNCOMMENT AS NEEDED:
+    // (refer to INFO.txt for details on actions performed)
+ 
+    /* ... To use La BlueFrog as USB Mass Storage (Full Speed)      */
+    Success &= LBF_LaunchUSB_MassStorage();
+TimeStart= HAL_GetTick();
+    LBF_Delay_ms(1200);
+    // ????
+    // Need sufficient delay else module not detected on USB by PC
+    // The more emWin instructions below, the larger the delay required ????
+
+
+    /* ... To initialize FatFS                                      */
+    /*     and mount the Data Flash as FAT File System              */
+    // Success &= LBF_FatFS_Init();
+
+    /* ... To initialize the STemWin Graphical Library              */ 
+    /*     Caution: reserves some RAM - keep some for stack/heap    */
+    Success &= LBF_emWin_Init();
+
+    // ERROR HANDLER
+    /* Replace by your own as wished */
+    LBF_Led_StopNBlinkOnFalse (Success);
+    	// stops here if one of above inits has failed
+
+    LBF_Led_OFF();
+
+
+/* ===================================================== */
+/* Application Code Below */
+/* ===================================================== */
+
+
+/* ==  User Declarations =============================== */
+
+// uint8_t	ReadValue;
+uint32_t HClkFqcy, APB1ClkFqcy, APB2ClkFqcy ;
+
+/* ==  Body     ======================================== */
+
+
+
+    HClkFqcy = HAL_RCC_GetHCLKFreq();
+    APB1ClkFqcy = HAL_RCC_GetPCLK1Freq();
+    APB2ClkFqcy = HAL_RCC_GetPCLK2Freq();
+
+
+    /* ---  Display Clock Information    -------------- */
+
+    LBF_OLED_Switch_ON();
+    // Provide power (13V) to OLED panel, enable display
+
+    // Note: all GUI_ functions are primitives from the emWin
+    // graphics library
+
+
+
+    GUI_SetTextMode(GUI_TM_TRANS);  // transparent background for text
+    GUI_SetFont(&GUI_Font13B_ASCII);
+
+    GUI_DispStringAt( "HCLK= ", 10, Y_FULL_SCREEN*1/8 );
+    GUI_DispDecMin( (int32_t)HClkFqcy/1000000); 
+    GUI_DispString( "." );
+    GUI_DispDecMin( (int32_t)(HClkFqcy - (HClkFqcy/1000000)*1000000 ) );
+    GUI_DispString( " MHz\n" );
+
+    GUI_DispStringAt( "PCLK1= ", 10, Y_FULL_SCREEN*3/8 );
+    GUI_DispDecMin( (int32_t)APB1ClkFqcy/1000000); 
+    GUI_DispString( "." );
+    GUI_DispDecMin( (int32_t)(APB1ClkFqcy - (APB1ClkFqcy/1000000)*1000000 ) );
+    GUI_DispString( " MHz\n" );
+
+    GUI_DispStringAt( "PCLK2= ", 10, Y_FULL_SCREEN*5/8 );
+    GUI_DispDecMin( (int32_t)APB2ClkFqcy/1000000); 
+    GUI_DispString( "." );
+    GUI_DispDecMin( (int32_t)(APB2ClkFqcy - (APB2ClkFqcy/1000000)*1000000 ) );
+    GUI_DispString( " MHz\n" );
+
+TimeStop= HAL_GetTick();
+GUI_DispString( "\nDelay (ms) = " );
+GUI_DispDecMin( TimeStop-TimeStart );
+
+    LBF_Led_ON();
+
+
+    /* ---  Loop on push-button monitoring   -------------- */
+
+
+    while (1)
+    {
+
+	LBF_Delay_ms(500);
+	LBF_Led_TOGGLE();
+
+	if ( LBF_State_Switch1_IsOn() )
+	{
+		LBF_Led_ON();
+
+		while ( LBF_State_Switch1_IsOn() ) ; 
+		    // wait until button released to continue
+	}
+
+    }
+    
+}
+
+
+/***  END OF FILE ************************************************************/

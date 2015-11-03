@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_dac.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of DAC HAL module.
   ******************************************************************************
   * @attention
@@ -182,7 +182,7 @@ typedef struct
   * @}
   */   
 
-/** @defgroup DAC_output_buffer
+/** @defgroup DAC_output_buffer DAC output buffer
   * @{
   */
 #define DAC_OUTPUTBUFFER_ENABLE            ((uint32_t)0x00000000)
@@ -192,7 +192,7 @@ typedef struct
   * @}
   */
     
-/** @defgroup DAC_Channel_selection
+/** @defgroup DAC_Channel_selection DAC Channel selection
   * @{
   */
 #define DAC_CHANNEL_1                      ((uint32_t)0x00000000)
@@ -233,7 +233,7 @@ typedef struct
   * @}
   */
   
-/** @defgroup DAC_ConnectOnChipPeripheral
+/** @defgroup DAC_ConnectOnChipPeripheral DAC ConnectOnChipPeripheral
   * @{
   */
 #define DAC_CHIPCONNECT_DISABLE  ((uint32_t)0x00000000)
@@ -384,12 +384,6 @@ typedef struct
                              ((ALIGN) == DAC_ALIGN_8B_R))
 
 #define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0)
-
-#define DAC_DHR12R1_ALIGNMENT(__ALIGNMENT__) (((uint32_t)0x00000008) + (__ALIGNMENT__))
-
-#define DAC_DHR12R2_ALIGNMENT(__ALIGNMENT__) (((uint32_t)0x00000014) + (__ALIGNMENT__))
-
-#define DAC_DHR12RD_ALIGNMENT(__ALIGNMENT__) (((uint32_t)0x00000020) + (__ALIGNMENT__))
 
 #define IS_DAC_REFRESHTIME(TIME)   ((TIME) <= 0x0000000FF)
 

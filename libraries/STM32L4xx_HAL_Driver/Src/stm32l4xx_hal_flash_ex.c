@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_flash_ex.c
   * @author  MCD Application Team
-  * @version V1.0.0 
-  * @date    26-June-2015
+  * @version V1.1.0 
+  * @date    16-September-2015
   * @brief   Extended FLASH HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the FLASH extended peripheral:
@@ -625,6 +625,16 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint32_t UserType, uint32_t UserCon
       optr_reg_mask |= FLASH_OPTR_nRST_STDBY;
     }
 
+    if((UserType & OB_USER_nRST_SHDW) != RESET)
+    {
+      /* nRST_SHDW option byte should be modified */
+      assert_param(IS_OB_USER_SHUTDOWN(UserConfig & FLASH_OPTR_nRST_SHDW));
+    
+      /* Set value and mask for nRST_SHDW option byte */
+      optr_reg_val |= (UserConfig & FLASH_OPTR_nRST_SHDW);
+      optr_reg_mask |= FLASH_OPTR_nRST_SHDW;
+    }
+
     if((UserType & OB_USER_IWDG_SW) != RESET)
     {
       /* IWDG_SW option byte should be modified */
@@ -883,9 +893,9 @@ static uint32_t FLASH_OB_GetRDP(void)
 /**
   * @brief  Return the FLASH User Option Byte value.
   * @retval The FLASH User Option Bytes values: 
-  *         BOR_LEV(Bit8-10), nRST_STOP(Bit12), nRST_STDBY(Bit13), IWDG_SW(Bit16),
-  *         IWDG_STOP(Bit17), IWDG_STDBY(Bit18), WWDG_SW(Bit19), BFB2(Bit20), 
-  *         DUALBANK(Bit21), nBOOT1(Bit23), SRAM2_PE(Bit24) and SRAM2_RST(Bit25). 
+  *         BOR_LEV(Bit8-10), nRST_STOP(Bit12), nRST_STDBY(Bit13), nRST_SHDW(Bit14), 
+  *         IWDG_SW(Bit16), IWDG_STOP(Bit17), IWDG_STDBY(Bit18), WWDG_SW(Bit19),  
+  *         BFB2(Bit20), DUALBANK(Bit21), nBOOT1(Bit23), SRAM2_PE(Bit24) and SRAM2_RST(Bit25). 
   */
 static uint32_t FLASH_OB_GetUser(void)
 {

@@ -171,7 +171,7 @@
   * @brief This is the HAL system configuration section
   */
 #define  VDD_VALUE                    ((uint32_t)3000) /*!< Value of VDD in mv */  // Was 3300 in template file
-#define  TICK_INT_PRIORITY            ((uint32_t)0x4) /*!< tick interrupt priority */  // Was 0xF in template file
+#define  TICK_INT_PRIORITY            ((uint32_t)0xF) /*!< tick interrupt priority */  
 #define  USE_RTOS                     0
 #define  PREFETCH_ENABLE              1
 #define  INSTRUCTION_CACHE_ENABLE     1

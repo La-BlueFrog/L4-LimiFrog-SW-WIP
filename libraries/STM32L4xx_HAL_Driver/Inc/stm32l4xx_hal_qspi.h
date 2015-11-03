@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_qspi.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of QSPI HAL module.
   ******************************************************************************
   * @attention
@@ -194,7 +194,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup QSPI_ErrorCode 
+/** @defgroup QSPI_ErrorCode QSPI Error Code
   * @{
   */ 
 #define HAL_QSPI_ERROR_NONE            ((uint32_t)0x00000000) /*!< No error           */
@@ -205,7 +205,7 @@ typedef struct
   * @}
   */ 
 
-/** @defgroup QSPI_SampleShifting 
+/** @defgroup QSPI_SampleShifting QSPI Sample Shifting
   * @{
   */
 #define QSPI_SAMPLE_SHIFTING_NONE      ((uint32_t)0x00000000)        /*!<No clock cycle shift to sample data*/
@@ -214,7 +214,7 @@ typedef struct
   * @}
   */ 
 
-/** @defgroup QSPI_ChipSelectHighTime 
+/** @defgroup QSPI_ChipSelectHighTime QSPI ChipSelect High Time
   * @{
   */
 #define QSPI_CS_HIGH_TIME_1_CYCLE      ((uint32_t)0x00000000)                              /*!<nCS stay high for at least 1 clock cycle between commands*/
@@ -229,7 +229,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_ClockMode 
+/** @defgroup QSPI_ClockMode QSPI Clock Mode
   * @{
   */
 #define QSPI_CLOCK_MODE_0              ((uint32_t)0x00000000)         /*!<Clk stays low while nCS is released*/
@@ -238,7 +238,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_AddressSize 
+/** @defgroup QSPI_AddressSize QSPI Address Size
   * @{
   */
 #define QSPI_ADDRESS_8_BITS            ((uint32_t)0x00000000)           /*!<8-bit address*/
@@ -249,7 +249,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_AlternateBytesSize 
+/** @defgroup QSPI_AlternateBytesSize QSPI Alternate Bytes Size
   * @{
   */
 #define QSPI_ALTERNATE_BYTES_8_BITS    ((uint32_t)0x00000000)           /*!<8-bit alternate bytes*/
@@ -260,7 +260,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_InstructionMode 
+/** @defgroup QSPI_InstructionMode QSPI Instruction Mode
 * @{
 */
 #define QSPI_INSTRUCTION_NONE          ((uint32_t)0x00000000)          /*!<No instruction*/
@@ -271,7 +271,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_AddressMode 
+/** @defgroup QSPI_AddressMode QSPI Address Mode
 * @{
 */
 #define QSPI_ADDRESS_NONE              ((uint32_t)0x00000000)           /*!<No address*/
@@ -282,7 +282,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_AlternateBytesMode 
+/** @defgroup QSPI_AlternateBytesMode QSPI Alternate Bytes Mode
 * @{
 */
 #define QSPI_ALTERNATE_BYTES_NONE      ((uint32_t)0x00000000)           /*!<No alternate bytes*/
@@ -293,7 +293,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_DataMode 
+/** @defgroup QSPI_DataMode QSPI Data Mode
   * @{
   */
 #define QSPI_DATA_NONE                 ((uint32_t)0X00000000)           /*!<No data*/
@@ -304,7 +304,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_DdrMode 
+/** @defgroup QSPI_DdrMode QSPI DDR Mode
   * @{
   */
 #define QSPI_DDR_MODE_DISABLE          ((uint32_t)0x00000000)       /*!<Double data rate mode disabled*/
@@ -313,7 +313,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_DdrHoldHalfCycle 
+/** @defgroup QSPI_DdrHoldHalfCycle QSPI DDR Data Output Delay
   * @{
   */
 #define QSPI_DDR_HHC_ANALOG_DELAY      ((uint32_t)0x00000000)       /*!<Delay the data output using analog delay in DDR mode*/
@@ -321,7 +321,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_SIOOMode 
+/** @defgroup QSPI_SIOOMode QSPI Send Instruction Mode
   * @{
   */
 #define QSPI_SIOO_INST_EVERY_CMD       ((uint32_t)0x00000000)       /*!<Send instruction on every transaction*/
@@ -330,7 +330,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_MatchMode 
+/** @defgroup QSPI_MatchMode QSPI Match Mode
   * @{
   */
 #define QSPI_MATCH_MODE_AND            ((uint32_t)0x00000000)     /*!<AND match mode between unmasked bits*/
@@ -339,7 +339,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_AutomaticStop 
+/** @defgroup QSPI_AutomaticStop QSPI Automatic Stop
   * @{
   */
 #define QSPI_AUTOMATIC_STOP_DISABLE    ((uint32_t)0x00000000)      /*!<AutoPolling stops only with abort or QSPI disabling*/
@@ -348,7 +348,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_TimeOutActivation 
+/** @defgroup QSPI_TimeOutActivation QSPI Timeout Activation
   * @{
   */
 #define QSPI_TIMEOUT_COUNTER_DISABLE   ((uint32_t)0x00000000)      /*!<Timeout counter disabled, nCS remains active*/
@@ -357,7 +357,7 @@ typedef struct
   * @}
   */  
 
-/** @defgroup QSPI_Flags 
+/** @defgroup QSPI_Flags QSPI Flags
   * @{
   */
 #define QSPI_FLAG_BUSY                 QUADSPI_SR_BUSY /*!<Busy flag: operation is ongoing*/
@@ -370,7 +370,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_Interrupts 
+/** @defgroup QSPI_Interrupts QSPI Interrupts
   * @{
   */  
 #define QSPI_IT_TO                     QUADSPI_CR_TOIE /*!<Interrupt on the timeout flag*/
@@ -382,7 +382,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup QSPI_Timeout_definition 
+/** @defgroup QSPI_Timeout_definition QSPI Timeout definition
   * @brief QSPI Timeout definition
   * @{
   */ 

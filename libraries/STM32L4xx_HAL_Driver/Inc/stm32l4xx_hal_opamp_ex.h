@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_opamp_ex.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of OPAMP HAL Extended module.
   ******************************************************************************
   * @attention
@@ -71,6 +71,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 /**
   * @}
   */
+
 /* Peripheral Control functions  ************************************************/
 /** @addtogroup OPAMPEx_Exported_Functions_Group2
   * @{

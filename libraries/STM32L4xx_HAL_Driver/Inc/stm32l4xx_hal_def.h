@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_def.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   This file contains HAL common defines, enumeration, macros and
   *          structures definitions.
   ******************************************************************************
@@ -78,11 +78,11 @@ typedef enum
 #define HAL_IS_BIT_SET(REG, BIT)         (((REG) & (BIT)) == (BIT))
 #define HAL_IS_BIT_CLR(REG, BIT)         (((REG) & (BIT)) == RESET)
 
-#define __HAL_LINKDMA(__HANDLE__, __PPP_DMA_FIELD__, __DMA_HANDLE__)               \
+#define __HAL_LINKDMA(__HANDLE__, __PPP_DMA_FIELD__, __DMA_HANDLE__)             \
                         do{                                                      \
-                              (__HANDLE__)->__PPP_DMA_FIELD__ = &(__DMA_HANDLE__); \
-                              (__DMA_HANDLE__).Parent = (__HANDLE__);             \
-                          } while(0)
+                            (__HANDLE__)->__PPP_DMA_FIELD__ = &(__DMA_HANDLE__); \
+                            (__DMA_HANDLE__).Parent = (__HANDLE__);              \
+                        } while(0)
 
 #define UNUSED(x) ((void)(x))
                          

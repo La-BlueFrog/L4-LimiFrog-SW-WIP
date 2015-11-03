@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_rcc.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   RCC HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Reset and Clock Control (RCC) peripheral:
@@ -266,7 +266,13 @@ void HAL_RCC_DeInit(void)
   /* Set MSION bit */
   SET_BIT(RCC->CR, RCC_CR_MSION);
 
-  /* Reset CFGR register */
+  /* Insure MSIRDY bit is set before writing default MSIRANGE value */
+  while(READ_BIT(RCC->CR, RCC_CR_MSIRDY) == RESET) { __NOP(); }
+  
+  /* Set MSIRANGE default value */
+  MODIFY_REG(RCC->CR, RCC_CR_MSIRANGE, RCC_MSIRANGE_6);
+  
+  /* Reset CFGR register (MSI is selected as system clock source) */
   CLEAR_REG(RCC->CFGR);
 
   /* Reset HSION, HSIKERON, HSIASFS, HSEON, HSECSSON, PLLON, PLLSAIxON bits */
@@ -280,7 +286,7 @@ void HAL_RCC_DeInit(void)
   CLEAR_REG(RCC->PLLSAI1CFGR);
   SET_BIT(RCC->PLLSAI1CFGR,  RCC_PLLSAI1CFGR_PLLSAI1N_4 );
 
-    /* Reset PLLSAI2CFGR register */
+  /* Reset PLLSAI2CFGR register */
   CLEAR_REG(RCC->PLLSAI2CFGR);
   SET_BIT(RCC->PLLSAI2CFGR,  RCC_PLLSAI2CFGR_PLLSAI2N_4 );
 
@@ -294,7 +300,7 @@ void HAL_RCC_DeInit(void)
 /**
   * @brief  Initialize the RCC Oscillators according to the specified parameters in the
   *         RCC_OscInitTypeDef.
-  * @param  RCC_OscInitStruct: pointer to an RCC_OscInitTypeDef structure that
+  * @param  RCC_OscInitStruct  pointer to an RCC_OscInitTypeDef structure that
   *         contains the configuration information for the RCC Oscillators.
   * @note   The PLL is not disabled when used as system clock.
   * @retval HAL status
@@ -476,7 +482,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     /* Check the parameters */
     assert_param(IS_RCC_HSI(RCC_OscInitStruct->HSIState));
-    assert_param(IS_RCC_CALIBRATION_VALUE(RCC_OscInitStruct->HSICalibrationValue));
+    assert_param(IS_RCC_HSI_CALIBRATION_VALUE(RCC_OscInitStruct->HSICalibrationValue));
 
     /* Check if HSI is used as system clock or as PLL source when PLL is selected as system clock */ 
     if((__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_CFGR_SWS_HSI) ||
@@ -758,15 +764,15 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 /**
   * @brief  Initialize the CPU, AHB and APB busses clocks according to the specified
   *         parameters in the RCC_ClkInitStruct.
-  * @param  RCC_ClkInitStruct: pointer to an RCC_OscInitTypeDef structure that
+  * @param  RCC_ClkInitStruct  pointer to an RCC_OscInitTypeDef structure that
   *         contains the configuration information for the RCC peripheral.
-  * @param  FLatency: FLASH Latency
+  * @param  FLatency  FLASH Latency
   *          This parameter can be one of the following values:
-  *            @arg FLASH_LATENCY_0:  FLASH 0 Latency cycle
-  *            @arg FLASH_LATENCY_1:  FLASH 1 Latency cycle
-  *            @arg FLASH_LATENCY_2:  FLASH 2 Latency cycle
-  *            @arg FLASH_LATENCY_3:  FLASH 3 Latency cycle
-  *            @arg FLASH_LATENCY_4:  FLASH 4 Latency cycle
+  *            @arg FLASH_LATENCY_0   FLASH 0 Latency cycle
+  *            @arg FLASH_LATENCY_1   FLASH 1 Latency cycle
+  *            @arg FLASH_LATENCY_2   FLASH 2 Latency cycle
+  *            @arg FLASH_LATENCY_3   FLASH 3 Latency cycle
+  *            @arg FLASH_LATENCY_4   FLASH 4 Latency cycle
   *
   * @note   The SystemCoreClock CMSIS variable is used to store System Clock Frequency
   *         and updated by HAL_RCC_GetHCLKFreq() function called within this function
@@ -1067,25 +1073,26 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
 /**
   * @brief  Select the clock source to output on MCO pin(PA8).
   * @note   PA8 should be configured in alternate function mode.
-  * @param  RCC_MCOx: specifies the output direction for the clock source.
+  * @param  RCC_MCOx  specifies the output direction for the clock source.
   *          For STM32L4xx family this parameter can have only one value:
-  *            @arg RCC_MCO1: Clock source to output on MCO1 pin(PA8).
-  * @param  RCC_MCOSource: specifies the clock source to output.
+  *            @arg @ref RCC_MCO1  Clock source to output on MCO1 pin(PA8).
+  * @param  RCC_MCOSource  specifies the clock source to output.
   *          This parameter can be one of the following values:
-  *            @arg RCC_MCO1SOURCE_SYSCLK: system  clock selected as MCO source
-  *            @arg RCC_MCO1SOURCE_MSI: MSI clock selected as MCO source
-  *            @arg RCC_MCO1SOURCE_HSI: HSI clock selected as MCO source
-  *            @arg RCC_MCO1SOURCE_HSE: HSE clock selected as MCO sourcee
-  *            @arg RCC_MCO1SOURCE_PLLCLK: main PLL clock selected as MCO source
-  *            @arg RCC_MCO1SOURCE_LSI: LSI clock selected as MCO source
-  *            @arg RCC_MCO1SOURCE_LSE: LSE clock selected as MCO source
-  * @param  RCC_MCODiv: specifies the MCO prescaler.
+  *            @arg @ref RCC_MCO1SOURCE_NOCLOCK  MCO output disabled, no clock on MCO
+  *            @arg @ref RCC_MCO1SOURCE_SYSCLK  system  clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_MSI  MSI clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_HSI  HSI clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_HSE  HSE clock selected as MCO sourcee
+  *            @arg @ref RCC_MCO1SOURCE_PLLCLK  main PLL clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_LSI  LSI clock selected as MCO source
+  *            @arg @ref RCC_MCO1SOURCE_LSE  LSE clock selected as MCO source
+  * @param  RCC_MCODiv  specifies the MCO prescaler.
   *          This parameter can be one of the following values:
-  *            @arg RCC_MCODIV_1: no division applied to MCO clock
-  *            @arg RCC_MCODIV_2: division by 2 applied to MCO clock
-  *            @arg RCC_MCODIV_4: division by 4 applied to MCO clock
-  *            @arg RCC_MCODIV_8: division by 8 applied to MCO clock
-  *            @arg RCC_MCODIV_16: division by 16 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_1  no division applied to MCO clock
+  *            @arg @ref RCC_MCODIV_2  division by 2 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_4  division by 4 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_8  division by 8 applied to MCO clock
+  *            @arg @ref RCC_MCODIV_16  division by 16 applied to MCO clock
   * @retval None
   */
 void HAL_RCC_MCOConfig( uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_MCODiv)
@@ -1102,12 +1109,12 @@ void HAL_RCC_MCOConfig( uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_
   /* Configue the MCO1 pin in alternate function mode */
   GPIO_InitStruct.Pin = MCO1_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
   HAL_GPIO_Init(MCO1_GPIO_PORT, &GPIO_InitStruct);
 
-  /* Mask MCO1 and MCO1PRE[2:0] bits then Select MCO1 clock source and prescaler */
+  /* Mask MCOSEL[] and MCOPRE[] bits then set MCO1 clock source and prescaler */
   MODIFY_REG(RCC->CFGR, (RCC_CFGR_MCOSEL | RCC_CFGR_MCO_PRE), (RCC_MCOSource | RCC_MCODiv ));
 }
 
@@ -1256,7 +1263,7 @@ uint32_t HAL_RCC_GetPCLK2Freq(void)
 /**
   * @brief  Configure the RCC_OscInitStruct according to the internal
   *         RCC configuration registers.
-  * @param  RCC_OscInitStruct: pointer to an RCC_OscInitTypeDef structure that
+  * @param  RCC_OscInitStruct  pointer to an RCC_OscInitTypeDef structure that
   *         will be configured.
   * @retval None
   */
@@ -1358,9 +1365,9 @@ void HAL_RCC_GetOscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 /**
   * @brief  Configure the RCC_ClkInitStruct according to the internal
   *         RCC configuration registers.
-  * @param  RCC_ClkInitStruct: pointer to an RCC_ClkInitTypeDef structure that
+  * @param  RCC_ClkInitStruct  pointer to an RCC_ClkInitTypeDef structure that
   *         will be configured.
-  * @param  pFLatency: Pointer on the Flash Latency.
+  * @param  pFLatency  Pointer on the Flash Latency.
   * @retval None
   */
 void HAL_RCC_GetClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, uint32_t *pFLatency)
@@ -1410,8 +1417,8 @@ void HAL_RCC_EnableCSS(void)
   */
 void HAL_RCC_NMI_IRQHandler(void)
 {
-  /* Check RCC CSSF flag  */
-  if(__HAL_RCC_GET_IT_SOURCE(RCC_IT_CSS))
+  /* Check RCC CSSF interrupt flag  */
+  if(__HAL_RCC_GET_IT(RCC_IT_CSS))
   {
     /* RCC Clock Security System interrupt user callback */
     HAL_RCC_CSSCallback();
@@ -1447,7 +1454,7 @@ __weak void HAL_RCC_CSSCallback(void)
 /**
   * @brief  Update number of Flash wait states in line with MSI range and current 
             voltage range.
-  * @param  msirange : MSI range value from RCC_MSIRANGE_0 to RCC_MSIRANGE_11
+  * @param  msirange  MSI range value from RCC_MSIRANGE_0 to RCC_MSIRANGE_11
   * @retval HAL status
   */
 static HAL_StatusTypeDef RCC_SetFlashLatencyFromMSIRange(uint32_t msirange)

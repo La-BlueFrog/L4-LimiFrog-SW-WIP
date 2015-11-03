@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_adc.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of ADC HAL module.
   ******************************************************************************
   * @attention
@@ -792,11 +792,9 @@ typedef struct
 #define ADC_STOP_CONVERSION_TIMEOUT     ((uint32_t) 5)      /*!< ADC stop time-out value */ 
 
 /* Delay for temperature sensor stabilization time.                         */
-/* Maximum delay is 10 us (refer device DataSheet, parameter t_START).      */
-/* Delay in CPU cycles, fixed to worst case with maximum CPU frequency      */
-/* equal to 80 MHz.                                                         */
-/* The minimum number of CPU cycles to fulfill this delay is 800            */
-#define ADC_TEMPSENSOR_DELAY_CPU_CYCLES    ((uint32_t)800)  /*!< ADC temperature sensor stabilization duration */ 
+/* Maximum delay is 120us (refer device datasheet, parameter tSTART).       */
+/* Unit: us                                                                 */
+#define ADC_TEMPSENSOR_DELAY_US         ((uint32_t) 120)
 
 /**
   * @}

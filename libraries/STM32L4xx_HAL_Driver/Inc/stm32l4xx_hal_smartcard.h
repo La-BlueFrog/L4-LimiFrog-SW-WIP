@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_smartcard.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of SMARTCARD HAL module.
   ******************************************************************************
   * @attention
@@ -653,7 +653,7 @@ typedef enum
   *            @arg SMARTCARD_IT_EOB:   End of block interrupt
   *            @arg SMARTCARD_IT_RTO:   Receive timeout interrupt
   *            @arg SMARTCARD_IT_TXE:   Transmit data register empty interrupt
-  *            @arg SMARTCARD_IT_TC:   Transmission complete interrupt
+  *            @arg SMARTCARD_IT_TC:    Transmission complete interrupt
   *            @arg SMARTCARD_IT_RXNE:  Receive data register not empty interrupt
   *            @arg SMARTCARD_IT_IDLE:  Idle line detection interrupt  
   *            @arg SMARTCARD_IT_ORE:   Overrun error interrupt
@@ -673,6 +673,7 @@ typedef enum
   *            @arg SMARTCARD_IT_TXE:   Transmit data register empty interrupt
   *            @arg SMARTCARD_IT_TC:    Transmission complete interrupt
   *            @arg SMARTCARD_IT_RXNE:  Receive data register not empty interrupt
+  *            @arg SMARTCARD_IT_IDLE:  Idle line detection interrupt  
   *            @arg SMARTCARD_IT_ORE:   Overrun error interrupt
   *            @arg SMARTCARD_IT_NE:    Noise error interrupt
   *            @arg SMARTCARD_IT_FE:    Framing error interrupt
@@ -687,12 +688,13 @@ typedef enum
 /** @brief  Clear the specified SMARTCARD ISR flag, in setting the proper ICR register flag.
   * @param  __HANDLE__: specifies the SMARTCARD Handle.
   * @param  __IT_CLEAR__: specifies the interrupt clear register flag that needs to be set
-  *                       to clear the corresponding interrupt
+  *                       to clear the corresponding interrupt.
   *          This parameter can be one of the following values:
   *            @arg SMARTCARD_CLEAR_PEF:    Parity error clear flag
   *            @arg SMARTCARD_CLEAR_FEF:    Framing error clear flag
   *            @arg SMARTCARD_CLEAR_NEF:    Noise detected clear flag
   *            @arg SMARTCARD_CLEAR_OREF:   OverRun error clear flag
+  *            @arg SMARTCARD_CLEAR_IDLEF:  Idle line detection clear flag    
   *            @arg SMARTCARD_CLEAR_TCF:    Transmission complete clear flag
   *            @arg SMARTCARD_CLEAR_RTOF:   Receiver timeout clear flag
   *            @arg SMARTCARD_CLEAR_EOBF:   End of block clear flag

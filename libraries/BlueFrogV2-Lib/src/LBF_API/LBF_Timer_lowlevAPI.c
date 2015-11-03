@@ -166,13 +166,24 @@ uint32_t TimerClockFqcy;
   // 	2. Otherwise, they are set to twice (×2) the frequency of the APB domain.     
 
 
-
+  
   // Configure the TIM peripheral Time Base
-  htim.Init.Prescaler = (TimerClockFqcy/1000000)*Timer_TimeUnit_us - 1; // so prescaled clock period = Timer_TimeUnit_us micro-seconds
+
+  // Based on hypothesis that APB1CLK = APB2CLK = Core Clock/4 so 20MHz max
+  // and therefore TIMxCLK max = 2x APBCLK = 40MHz max
+  // So Prescaler value below fits on 16 bits (<65536)
+
+  htim.Init.Prescaler = ( (TimerClockFqcy/1000)*Timer_TimeUnit_us) / 1000 - 1;  
+	// split calculations to preserve correct accuracy in fixed point while avoiding overflows
+	// This assumes Timer_TimeUnit_us is always <  
+  htim.Init.Period = Period_as_TimerUnits -1 ;  
   htim.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim.Init.Period = Period_as_TimerUnits -1 ;  // specified by caller
-  htim.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1; // ie no division
+  htim.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1; 
   HAL_TIM_Base_Init(&htim);
+
+  // !!! CAUTION: if APBCLK increased so that TimerClockFrequency>655360000
+  // then Overflow on Prescaler - wrong results !!!
+
 
 }
 

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_i2c_ex.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of I2C HAL Extended module.
   ******************************************************************************
   * @attention
@@ -57,11 +57,11 @@
 /* Exported types ------------------------------------------------------------*/ 
 /* Exported constants --------------------------------------------------------*/
 
-/** @defgroup I2CEx_Exported_Constants
+/** @defgroup I2CEx_Exported_Constants I2CEx Exported Constants
   * @{
   */
 
-/** @defgroup I2CEx_Analog_Filter
+/** @defgroup I2CEx_Analog_Filter I2CEx Analog Filter
   * @{
   */
 #define I2C_ANALOGFILTER_ENABLE         ((uint32_t)0x00000000)
@@ -70,7 +70,7 @@
   * @}
   */
 
-/** @defgroup I2CEx_FastModePlus
+/** @defgroup I2CEx_FastModePlus I2CEx FastModePlus
   * @{
   */
 #define I2C_FASTMODEPLUS_PB6            SYSCFG_CFGR1_I2C_PB6_FMP  /*!< Enable Fast Mode Plus on PB6       */

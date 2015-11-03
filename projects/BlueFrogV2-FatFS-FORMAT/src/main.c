@@ -111,7 +111,7 @@ boolean_t  Success = TRUE;
     f_close(&MyFile);
  
     // Launch USB
-//    Success &= LBF_LaunchUSB_MassStorage();  
+    Success &= LBF_LaunchUSB_MassStorage();  
 
     /* Error handler */
     LBF_Led_StopNBlinkOnFalse (Success);

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_pwr_ex.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of PWR HAL Extended module.
   ******************************************************************************
   * @attention
@@ -61,12 +61,13 @@
   * @{
   */
 
+
 /**
   * @brief  PWR PVM configuration structure definition
   */
 typedef struct
 {
-  uint32_t PVMType;   /*!< PVMType: Specifies which voltage is monitored and against which threshold.
+  uint32_t PVMType;   /*!< PVMType: Specifies which voltage is monitored and against which threshold. 
                            This parameter can be a value of @ref PWREx_PVM_Type. 
                            @arg PWR_PVM_1: Peripheral Voltage Monitoring 1 enable: VDDUSB versus 1.2 V (applicable when USB feature is supported). 
                            @arg PWR_PVM_2: Peripheral Voltage Monitoring 2 enable: VDDIO2 versus 0.9 V (applicable when VDDIO2 is present on device). 
@@ -121,9 +122,9 @@ typedef struct
 /** @defgroup PWREx_PVM_Type Peripheral Voltage Monitoring type
   * @{
   */
-#if defined(STM32L475xx) || defined(STM32L476xx) || defined (STM32L485xx) || defined(STM32L486xx)
+#if defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx)
 #define PWR_PVM_1                  PWR_CR2_PVME1  /*!< Peripheral Voltage Monitoring 1 enable: VDDUSB versus 1.2 V (applicable when USB feature is supported) */
-#endif /* STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx */
+#endif /* defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) */
 #define PWR_PVM_2                  PWR_CR2_PVME2  /*!< Peripheral Voltage Monitoring 2 enable: VDDIO2 versus 0.9 V (applicable when VDDIO2 is present on device) */
 #define PWR_PVM_3                  PWR_CR2_PVME3  /*!< Peripheral Voltage Monitoring 3 enable: VDDA versus 1.62 V */
 #define PWR_PVM_4                  PWR_CR2_PVME4  /*!< Peripheral Voltage Monitoring 4 enable: VDDA versus 2.2 V  */
@@ -208,17 +209,17 @@ typedef struct
 #define PWR_GPIO_E   0x00000004      /*!< GPIO port E */
 #define PWR_GPIO_F   0x00000005      /*!< GPIO port F */
 #define PWR_GPIO_G   0x00000006      /*!< GPIO port G */
-#define PWR_GPIO_H   0x00000007      /*!< GPIO port H */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+#define PWR_GPIO_H   0x00000007      /*!< GPIO port H */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 /**
   * @}
-  */   
- 
+  */ 
+  
 /** @defgroup PWREx_PVM_EXTI_LINE PWR PVM external interrupts lines
   * @{
   */    
 #if defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx)
 #define PWR_EXTI_LINE_PVM1  ((uint32_t)0x00000008)  /*!< External interrupt line 35 Connected to the PVM1 EXTI Line   */
-#endif /* STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx */
+#endif /* defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) */
 
 #define PWR_EXTI_LINE_PVM2  ((uint32_t)0x00000010)  /*!< External interrupt line 36 Connected to the PVM2 EXTI Line   */
 #define PWR_EXTI_LINE_PVM3  ((uint32_t)0x00000020)  /*!< External interrupt line 37 Connected to the PVM3 EXTI Line   */
@@ -232,7 +233,7 @@ typedef struct
   */    
 #if defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx)
 #define PWR_EVENT_LINE_PVM1 ((uint32_t)0x00000008)  /*!< Event line 35 Connected to the PVM1 EXTI Line */
-#endif /* STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx */
+#endif /* defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) */
 #define PWR_EVENT_LINE_PVM2 ((uint32_t)0x00000010)  /*!< Event line 36 Connected to the PVM2 EXTI Line */
 #define PWR_EVENT_LINE_PVM3 ((uint32_t)0x00000020)  /*!< Event line 37 Connected to the PVM3 EXTI Line */
 #define PWR_EVENT_LINE_PVM4 ((uint32_t)0x00000040)  /*!< Event line 38 Connected to the PVM4 EXTI Line */
@@ -265,7 +266,7 @@ typedef struct
 #define PWR_FLAG_PVDO                       ((uint32_t)0x004B)   /*!< Power Voltage Detector output flag */
 #if defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx)
 #define PWR_FLAG_PVMO1                      ((uint32_t)0x004C)   /*!< Power Voltage Monitoring 1 output flag */
-#endif /* STM32L475xx || STM32L476xx || STM32L485xx || STM32L486xx */
+#endif /* defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) */
 #define PWR_FLAG_PVMO2                      ((uint32_t)0x004D)   /*!< Power Voltage Monitoring 2 output flag */
 #define PWR_FLAG_PVMO3                      ((uint32_t)0x004E)   /*!< Power Voltage Monitoring 3 output flag */
 #define PWR_FLAG_PVMO4                      ((uint32_t)0x004F)   /*!< Power Voltage Monitoring 4 output flag */
@@ -461,9 +462,6 @@ typedef struct
   * @retval None
   */
 #define __HAL_PWR_PVM2_EXTI_CLEAR_FLAG()  WRITE_REG(EXTI->PR2, PWR_EXTI_LINE_PVM2)
-
-
-
 
 /**
   * @brief Enable the PVM3 Extended Interrupt Line.
@@ -713,23 +711,9 @@ typedef struct
 #define IS_PWR_BATTERY_CHARGING(CHARGING) (((CHARGING) == PWR_BATTERY_CHARGING_DISABLE) ||\
                                            ((CHARGING) == PWR_BATTERY_CHARGING_ENABLE)) 
                                            
-#define IS_PWR_GPIO_BIT_NUMBER(BIT_NUMBER) (((BIT_NUMBER) == PWR_GPIO_BIT_0) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_1) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_2) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_3) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_4) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_5) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_6) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_7) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_8) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_9) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_10) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_11) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_12) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_13) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_14) ||\
-                                            ((BIT_NUMBER) == PWR_GPIO_BIT_15))    
-                                            
+#define IS_PWR_GPIO_BIT_NUMBER(BIT_NUMBER) (((BIT_NUMBER) & GPIO_PIN_MASK) != (uint32_t)0x00)
+                                           
+                             
 #define IS_PWR_GPIO(GPIO) (((GPIO) == PWR_GPIO_A) ||\
                            ((GPIO) == PWR_GPIO_B) ||\
                            ((GPIO) == PWR_GPIO_C) ||\
@@ -738,6 +722,7 @@ typedef struct
                            ((GPIO) == PWR_GPIO_F) ||\
                            ((GPIO) == PWR_GPIO_G) ||\
                            ((GPIO) == PWR_GPIO_H))
+
 
 /**
   * @}

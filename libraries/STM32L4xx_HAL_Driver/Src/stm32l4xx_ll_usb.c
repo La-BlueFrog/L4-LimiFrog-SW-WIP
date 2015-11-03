@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_ll_usb.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   USB Low Layer HAL module driver.
   *   
   *          This file provides firmware functions to manage the following 

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_sai.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   SAI HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Serial Audio Interface (SAI) peripheral:
@@ -372,6 +372,9 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
   /* This setting must be done with both audio block (A & B) disabled                   */
   switch(hsai->Init.SynchroExt)
   {
+    case SAI_SYNCEXT_DISABLE :
+      tmpregisterGCR = 0;
+      break;
     case SAI_SYNCEXT_IN_ENABLE :
       tmpregisterGCR = SAI_GCR_SYNCIN_0;
       break;
@@ -380,10 +383,6 @@ HAL_StatusTypeDef HAL_SAI_Init(SAI_HandleTypeDef *hsai)
       break;
     case SAI_SYNCEXT_OUTBLOCKB_ENABLE :
       tmpregisterGCR = SAI_GCR_SYNCOUT_1;
-      break;
-    case SAI_SYNCEXT_DISABLE :
-    default:
-      tmpregisterGCR = 0;
       break;
   }
     
@@ -1422,6 +1421,8 @@ uint32_t HAL_SAI_GetError(SAI_HandleTypeDef *hsai)
   */
 static HAL_StatusTypeDef SAI_InitI2S(SAI_HandleTypeDef *hsai, uint32_t protocol, uint32_t datasize, uint32_t nbslot)
 {
+  HAL_StatusTypeDef errorcode = HAL_OK;
+
   hsai->Init.Protocol            = SAI_FREE_PROTOCOL;
   hsai->Init.FirstBit            = SAI_FIRSTBIT_MSB;
   hsai->Init.ClockStrobing       = SAI_CLOCKSTROBING_FALLINGEDGE;
@@ -1453,32 +1454,41 @@ static HAL_StatusTypeDef SAI_InitI2S(SAI_HandleTypeDef *hsai, uint32_t protocol,
    
   /* Frame definition */
   hsai->Init.DataSize = 0xFFFFFFFF;
-  switch(datasize)
+  if(datasize == SAI_PROTOCOL_DATASIZE_16BIT)
   {
-  case SAI_PROTOCOL_DATASIZE_16BIT:
     hsai->Init.DataSize = SAI_DATASIZE_16;
     hsai->FrameInit.FrameLength = 32*(nbslot/2);
     hsai->FrameInit.ActiveFrameLength = 16*(nbslot/2);
     hsai->SlotInit.SlotSize = SAI_SLOTSIZE_16B;
-    break; 
-  case SAI_PROTOCOL_DATASIZE_16BITEXTENDED :
-    if (hsai->Init.DataSize == 0xFFFFFFFF)
+  }
+  else if(datasize == SAI_PROTOCOL_DATASIZE_16BITEXTENDED)
+  {
+    if(hsai->Init.DataSize == 0xFFFFFFFF)
     {
       hsai->Init.DataSize = SAI_DATASIZE_16;
     }
-    /* Fall thru next statement */
-  case SAI_PROTOCOL_DATASIZE_24BIT:
-    if (hsai->Init.DataSize == 0xFFFFFFFF)
+  }
+  else if(datasize == SAI_PROTOCOL_DATASIZE_24BIT)
+  { 
+    if(hsai->Init.DataSize == 0xFFFFFFFF)
     {
       hsai->Init.DataSize = SAI_DATASIZE_24;
     }
-    /* Fall thru next statement */
-  case SAI_PROTOCOL_DATASIZE_32BIT: 
-    if (hsai->Init.DataSize == 0xFFFFFFFF)
+  }
+  else if(datasize == SAI_PROTOCOL_DATASIZE_32BIT)
+  {
+    if(hsai->Init.DataSize == 0xFFFFFFFF) 
     {
       hsai->Init.DataSize = SAI_DATASIZE_32;
     }
+  }
+  else
+  {
+    errorcode = HAL_ERROR;
+  }
     
+  if(errorcode == HAL_OK)
+  {
     hsai->FrameInit.FrameLength = 64*(nbslot/2);
     hsai->FrameInit.ActiveFrameLength = 32*(nbslot/2);
     hsai->SlotInit.SlotSize = SAI_SLOTSIZE_32B;
@@ -1489,17 +1499,14 @@ static HAL_StatusTypeDef SAI_InitI2S(SAI_HandleTypeDef *hsai, uint32_t protocol,
       {
         hsai->SlotInit.FirstBitOffset = 16;
       }
-      if (datasize == SAI_PROTOCOL_DATASIZE_24BIT)
+      else if (datasize == SAI_PROTOCOL_DATASIZE_24BIT)
       {
         hsai->SlotInit.FirstBitOffset = 8;
       }
     }
-    break;
-  default :
-    return HAL_ERROR;
   }
- 
-  return HAL_OK;
+
+  return errorcode;
 }
 
 /**

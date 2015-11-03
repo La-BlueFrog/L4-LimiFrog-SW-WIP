@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_cryp_ex.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   CRYPEx HAL module driver.
   *          This file provides firmware functions to manage the extended 
   *          functionalities of the Cryptography (CRYP) peripheral.  
@@ -344,8 +344,9 @@ HAL_StatusTypeDef HAL_CRYPEx_AES_IT(CRYP_HandleTypeDef *hcryp,  uint8_t *pInputD
   * @note   Supported operating modes are encryption, decryption and key derivation with decryption. 
   * @note   No DMA channel is provided for key derivation only and therefore, access to AES_KEYRx 
   *         registers must be done by software.   
-  * @note  This API is not applicable to key derivation only; for such a mode, access to AES_KEYRx 
-  *        registers must be done by software thru HAL_CRYPEx_AES() or HAL_CRYPEx_AES_IT() APIs.
+  * @note   This API is not applicable to key derivation only; for such a mode, access to AES_KEYRx 
+  *         registers must be done by software thru HAL_CRYPEx_AES() or HAL_CRYPEx_AES_IT() APIs.
+  * @note   pInputData and pOutputData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.   
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYPEx_AES_DMA(CRYP_HandleTypeDef *hcryp,  uint8_t *pInputData, uint16_t Size, uint8_t *pOutputData)
@@ -1123,7 +1124,8 @@ HAL_StatusTypeDef HAL_CRYPEx_AES_Auth_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pIn
   *                      and in case of CMAC header phase.
   * @note   Supported operating modes are encryption and decryption, supported chaining modes are GCM, GMAC and CMAC.
   * @note   Phases are singly processed according to hcryp->Init.GCMCMACPhase so that steps in these specific chaining modes 
-  *         can be skipped by the user if so required.           
+  *         can be skipped by the user if so required.
+  * @note   pInputData and pOutputData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.            
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYPEx_AES_Auth_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pInputData, uint64_t Size, uint8_t *pOutputData)
@@ -1600,6 +1602,23 @@ void HAL_CRYPEx_Read_ControlRegister(CRYP_HandleTypeDef *hcryp, uint8_t* Output)
 void HAL_CRYPEx_Write_ControlRegister(CRYP_HandleTypeDef *hcryp, uint8_t* Input)
 {  
   hcryp->Instance->CR = *(uint32_t*)(Input);
+}
+
+/**
+  * @brief  Request CRYP processing suspension when in polling or interruption mode.
+  * @param  hcryp: pointer to a CRYP_HandleTypeDef structure that contains
+  *         the configuration information for CRYP module. 
+  * @note   Set the handle field SuspendRequest to the appropriate value so that 
+  *         the on-going CRYP processing is suspended as soon as the required 
+  *         conditions are met.
+  * @note   It is advised not to suspend the CRYP processing when the DMA controller 
+  *         is managing the data transfer     
+  * @retval None
+  */
+void HAL_CRYPEx_ProcessSuspend(CRYP_HandleTypeDef *hcryp)  
+{
+  /* Set Handle Suspend Request field */
+  hcryp->SuspendRequest = HAL_CRYP_SUSPEND;
 }
 
 /**

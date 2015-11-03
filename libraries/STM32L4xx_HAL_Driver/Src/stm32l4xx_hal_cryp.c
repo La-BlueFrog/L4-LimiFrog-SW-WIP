@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_cryp.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   CRYP HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Cryptography (CRYP) peripheral:
@@ -501,7 +501,7 @@ HAL_StatusTypeDef HAL_CRYP_AESCTR_Encrypt(CRYP_HandleTypeDef *hcryp, uint8_t *pP
   */
 HAL_StatusTypeDef HAL_CRYP_AESECB_Decrypt(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData, uint32_t Timeout)
 {
-    /* Re-initialize AES IP with proper parameters */
+  /* Re-initialize AES IP with proper parameters */
   if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
   {
     return HAL_ERROR;
@@ -532,7 +532,7 @@ HAL_StatusTypeDef HAL_CRYP_AESECB_Decrypt(CRYP_HandleTypeDef *hcryp, uint8_t *pC
   */
 HAL_StatusTypeDef HAL_CRYP_AESCBC_Decrypt(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData, uint32_t Timeout)
 {
-    /* Re-initialize AES IP with proper parameters */
+  /* Re-initialize AES IP with proper parameters */
   if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
   {
     return HAL_ERROR;
@@ -593,6 +593,19 @@ HAL_StatusTypeDef HAL_CRYP_AESCTR_Decrypt(CRYP_HandleTypeDef *hcryp, uint8_t *pC
   */
 HAL_StatusTypeDef HAL_CRYP_AESECB_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pPlainData, uint16_t Size, uint8_t *pCypherData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_ENCRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_ECB;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }  
+  
   return HAL_CRYPEx_AES_IT(hcryp, pPlainData, Size, pCypherData);
 }
 
@@ -610,6 +623,19 @@ HAL_StatusTypeDef HAL_CRYP_AESECB_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t 
   */
 HAL_StatusTypeDef HAL_CRYP_AESCBC_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pPlainData, uint16_t Size, uint8_t *pCypherData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_ENCRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CBC;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_IT(hcryp, pPlainData, Size, pCypherData);
 }
   
@@ -628,6 +654,19 @@ HAL_StatusTypeDef HAL_CRYP_AESCBC_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t 
   */
 HAL_StatusTypeDef HAL_CRYP_AESCTR_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pPlainData, uint16_t Size, uint8_t *pCypherData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_ENCRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CTR;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_IT(hcryp, pPlainData, Size, pCypherData);
 }
 
@@ -640,11 +679,24 @@ HAL_StatusTypeDef HAL_CRYP_AESCTR_Encrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t 
   * @param  Size: Length of the plaintext buffer in bytes, must be a multiple of 16.
   * @param  pPlainData: Pointer to the plaintext buffer.
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_IT() API instead (usage recommended).     
+  *         resort to generic HAL_CRYPEx_AES_IT() API instead (usage recommended).      
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESECB_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_KEYDERIVATION_DECRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_ECB;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_IT(hcryp, pCypherData, Size, pPlainData);
 }
 
@@ -662,6 +714,19 @@ HAL_StatusTypeDef HAL_CRYP_AESECB_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t 
   */
 HAL_StatusTypeDef HAL_CRYP_AESCBC_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_KEYDERIVATION_DECRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CBC;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_IT(hcryp, pCypherData, Size, pPlainData);
 }
 
@@ -679,6 +744,19 @@ HAL_StatusTypeDef HAL_CRYP_AESCBC_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t 
   */
 HAL_StatusTypeDef HAL_CRYP_AESCTR_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_DECRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CTR;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }  
+  
   return HAL_CRYPEx_AES_IT(hcryp, pCypherData, Size, pPlainData);
 }
 
@@ -691,11 +769,25 @@ HAL_StatusTypeDef HAL_CRYP_AESCTR_Decrypt_IT(CRYP_HandleTypeDef *hcryp, uint8_t 
   * @param  Size: Length of the plaintext buffer in bytes, must be a multiple of 16.
   * @param  pCypherData: Pointer to the cyphertext buffer
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).    
+  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).
+  * @note   pPlainData and pCypherData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.    
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESECB_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pPlainData, uint16_t Size, uint8_t *pCypherData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_ENCRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_ECB;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_DMA(hcryp, pPlainData, Size, pCypherData);
 }
   
@@ -710,11 +802,25 @@ HAL_StatusTypeDef HAL_CRYP_AESECB_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t
   * @param  Size: Length of the plaintext buffer, must be a multiple of 16.
   * @param  pCypherData: Pointer to the cyphertext buffer
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).    
+  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).
+  * @note   pPlainData and pCypherData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.       
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESCBC_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pPlainData, uint16_t Size, uint8_t *pCypherData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_ENCRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CBC;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_DMA(hcryp, pPlainData, Size, pCypherData);
 }
 
@@ -727,11 +833,25 @@ HAL_StatusTypeDef HAL_CRYP_AESCBC_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t
   * @param  Size: Length of the plaintext buffer in bytes, must be a multiple of 16.
   * @param  pCypherData: Pointer to the cyphertext buffer.
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).   
+  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).
+  * @note   pPlainData and pCypherData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.      
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESCTR_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pPlainData, uint16_t Size, uint8_t *pCypherData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_ENCRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CTR;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+
   return HAL_CRYPEx_AES_DMA(hcryp, pPlainData, Size, pCypherData);
 }
 
@@ -744,11 +864,25 @@ HAL_StatusTypeDef HAL_CRYP_AESCTR_Encrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t
   * @param  Size: Length of the plaintext buffer in bytes, must be a multiple of 16.
   * @param  pPlainData: Pointer to the plaintext buffer
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).   
+  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended). 
+  * @note   pPlainData and pCypherData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.     
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESECB_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_KEYDERIVATION_DECRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_ECB;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_DMA(hcryp, pCypherData, Size, pPlainData);
 }
 
@@ -761,11 +895,25 @@ HAL_StatusTypeDef HAL_CRYP_AESECB_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t
   * @param  Size: Length of the plaintext buffer in bytes, must be a multiple of 16.
   * @param  pPlainData: Pointer to the plaintext buffer
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).   
+  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).
+  * @note   pPlainData and pCypherData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.      
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESCBC_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_KEYDERIVATION_DECRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CBC;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  
   return HAL_CRYPEx_AES_DMA(hcryp, pCypherData, Size, pPlainData);
 }
 
@@ -778,11 +926,25 @@ HAL_StatusTypeDef HAL_CRYP_AESCBC_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t
   * @param  Size: Length of the plaintext buffer in bytes, must be a multiple of 16.
   * @param  pPlainData: Pointer to the plaintext buffer
   * @note   This API is provided only to maintain compatibility with legacy software. Users should directly
-  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended).   
+  *         resort to generic HAL_CRYPEx_AES_DMA() API instead (usage recommended). 
+  * @note   pPlainData and pCypherData buffers must be 32-bit aligned to ensure a correct DMA transfer to and from the IP.     
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CRYP_AESCTR_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uint8_t *pCypherData, uint16_t Size, uint8_t *pPlainData)
 {
+  /* Re-initialize AES IP with proper parameters */
+  if (HAL_CRYP_DeInit(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }
+  hcryp->Init.OperatingMode = CRYP_ALGOMODE_DECRYPT;
+  hcryp->Init.ChainingMode = CRYP_CHAINMODE_AES_CTR;
+  hcryp->Init.KeyWriteFlag = CRYP_KEY_WRITE_ENABLE;
+  if (HAL_CRYP_Init(hcryp) != HAL_OK)
+  {
+    return HAL_ERROR;
+  }  
+  
   return HAL_CRYPEx_AES_DMA(hcryp, pCypherData, Size, pPlainData);
 }
 
@@ -990,10 +1152,11 @@ static HAL_StatusTypeDef  CRYP_SetKey(CRYP_HandleTypeDef *hcryp)
 {  
   uint32_t keyaddr = 0x0;
   
-  if (hcryp->Init.pKey == NULL)
+  if ((uint32_t)(hcryp->Init.pKey == NULL))
   {
     return HAL_ERROR;
   }
+  
   
   keyaddr = (uint32_t)(hcryp->Init.pKey);
   

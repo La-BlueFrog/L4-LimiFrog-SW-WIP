@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_tim.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of TIM HAL module.
   ******************************************************************************
   * @attention
@@ -977,7 +977,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup TIM_Break_System
+/** @defgroup TIM_Break_System TIM Break System
   * @{
   */
 #define TIM_BREAK_SYSTEM_ECC                 SYSCFG_CFGR2_ECCL  /*!< Enables and locks the ECC error signal with Break Input of TIM1/8/15/16/17 */
@@ -1336,7 +1336,7 @@ mode.
  ((__CHANNEL__) == TIM_CHANNEL_3) ? ((__HANDLE__)->Instance->CCR3 = (__COMPARE__)) :\
  ((__CHANNEL__) == TIM_CHANNEL_4) ? ((__HANDLE__)->Instance->CCR4 = (__COMPARE__)) :\
  ((__CHANNEL__) == TIM_CHANNEL_5) ? ((__HANDLE__)->Instance->CCR5 = (__COMPARE__)) :\
- ((__HANDLE__)->Instance->CCR6 |= (__COMPARE__)))
+ ((__HANDLE__)->Instance->CCR6 = (__COMPARE__)))
 
 /**
   * @brief  Get the TIM Capture Compare Register value on runtime.

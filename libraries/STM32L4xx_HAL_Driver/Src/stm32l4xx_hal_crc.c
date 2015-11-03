@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_crc.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   CRC HAL module driver.   
   *          This file provides firmware functions to manage the following 
   *          functionalities of the CRC peripheral:
@@ -113,8 +113,8 @@ static uint32_t CRC_Handle_16(CRC_HandleTypeDef *hcrc, uint16_t pBuffer[], uint3
   */
 
 /**
-  * @brief  Initializes the CRC according to the specified
-  *         parameters in the CRC_InitTypeDef and initialize the associated handle.
+  * @brief  Initialize the CRC according to the specified
+  *         parameters in the CRC_InitTypeDef and create the associated handle.
   * @param  hcrc: CRC handle
   * @retval HAL status
   */
@@ -285,7 +285,13 @@ __weak void HAL_CRC_MspDeInit(CRC_HandleTypeDef *hcrc)
   * @param  hcrc: CRC handle
   * @param  pBuffer: pointer to the input data buffer, exact input data format is
   *         provided by hcrc->InputDataFormat.  
-  * @param  BufferLength: input data buffer length
+  * @param  BufferLength: input data buffer length (number of bytes if pBuffer
+  *         type is * uint8_t, number of half-words if pBuffer type is * uint16_t,
+  *         number of words if pBuffer type is * uint32_t).
+  * @note  By default, the API expects a uint32_t pointer as input buffer parameter.
+  *        Input buffer pointers with other types simply need to be cast in uint32_t
+  *        and the API will internally adjust its input data processing based on the  
+  *        handle field hcrc->InputDataFormat.              
   * @retval uint32_t CRC (returned value LSBs for CRC shorter than 32 bits)
   */
 uint32_t HAL_CRC_Accumulate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_t BufferLength)
@@ -339,7 +345,13 @@ uint32_t HAL_CRC_Accumulate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_
   * @param  hcrc: CRC handle
   * @param  pBuffer: pointer to the input data buffer, exact input data format is
   *         provided by hcrc->InputDataFormat.  
-  * @param  BufferLength: input data buffer length
+  * @param  BufferLength: input data buffer length (number of bytes if pBuffer
+  *         type is * uint8_t, number of half-words if pBuffer type is * uint16_t,
+  *         number of words if pBuffer type is * uint32_t).
+  * @note  By default, the API expects a uint32_t pointer as input buffer parameter.
+  *        Input buffer pointers with other types simply need to be cast in uint32_t
+  *        and the API will internally adjust its input data processing based on the  
+  *        handle field hcrc->InputDataFormat. 
   * @retval uint32_t CRC (returned value LSBs for CRC shorter than 32 bits)
   */  
 uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_t BufferLength)
@@ -411,7 +423,7 @@ uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc, uint32_t pBuffer[], uint32_t
   */
 
 /**
-  * @brief  Returns the CRC handle state.
+  * @brief  Return the CRC handle state.
   * @param  hcrc: CRC handle
   * @retval HAL state
   */

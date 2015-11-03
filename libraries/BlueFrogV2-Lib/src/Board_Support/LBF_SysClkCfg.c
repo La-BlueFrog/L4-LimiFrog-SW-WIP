@@ -32,6 +32,14 @@
 /*******************************************************************************/
 
 
+/* ----------------------------------------------------------------------------
+ *  Assumption: 8MHz external oscillator (HSE),  32KHz external Xtal (LSE)    *
+ *  Want 80MHz core clock, 48 MHz USB clock, 1ms Timer Tick,
+ *  40MHz periph clock APB1 and APB2
+ *  Must set Flash Latency according to core clock (80MHz here)
+ * ---------------------------------------------------------------------------*/
+
+
 void LBF_SysClkCfg(void)
 {
 // Derived from Cube MX Code Generator 
@@ -46,54 +54,78 @@ void LBF_SysClkCfg(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 8;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
-  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;  
-  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;  // Currently set to provide PLLCLK = 32MHz - TODO: go to 80MHz
+  RCC_OscInitStruct.PLL.PLLN = 20; 
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;  // unused for now
+  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV8;  // unused for now
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;  // 8MHz*20/2 = 80MHz
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   { 
     // Error_Handler();
   }
 
-  // Set Voltage scale1 as MCU will run at 32MHz 
-  __PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);  //CHANGE FOR L4 ???
+
+ __PWR_CLK_ENABLE();
+
+
+  // Set Voltage scale to Range 1 to allow operation up to 80MHz
+  // (internal regulator will provide 1.2V typical) 
+  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   // Poll VOSF bit of in PWR_CSR. Wait until it is reset to 0 
   // This indicates regulator has reached required voltage level
-  while (__HAL_PWR_GET_FLAG(PWR_FLAG_VOSF) != RESET) {};  // VOSF was VOS in L1 !!!
+  while (__HAL_PWR_GET_FLAG(PWR_FLAG_VOSF) != RESET) {};  
 
-  // Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers
+
+  // Select PLL as system clock source 
+  // and configure the HCLK, PCLK1 and PCLK2 clocks dividers
+
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  // RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;  
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  // Makes APB1 = 8MHz when core clock HCLK= 32MHz - TODO adapt for 80MHz core
-  //RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2; // Makes APB1 = 16MHz when core clock HCLK= 32MHz - TODO adapt for 80MHz core
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) // Is Flash Latency correct ? see UserMan p535
+
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;	// SYSCLK = 80MHz
+
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1; // AHBCLK (HCLK) = 80MHz to Cortex
+
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  // APB1 periph clock = 20MHz 
+
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;  // APB2 periph clock = 20MHz
+
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK) 
+ 	// Flash Latency proposed by CubeMX 
   {
-    // Error_Handler();
+    // Error_Handler(); 
   }
 
-  // New for L4 (vs L1): USB clock source
+
+  // USB clock source
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
   PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLLSAI1;
   PeriphClkInit.PLLSAI1.PLLSAI1N = 12;
-  PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;
+  PeriphClkInit.PLLSAI1.PLLSAI1P = RCC_PLLP_DIV7;
+  PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;  // USB clock= 8MHz*12/2 = 48MHz
+  PeriphClkInit.PLLSAI1.PLLSAI1R = RCC_PLLR_DIV2;
   HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 
-  // New for L4 (vs L1): SysTick clock source
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/8000);
+ 
+  // SysTick clock source - 
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/8000); 
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK_DIV8);
+    // sets SysTick to generate 1 tick every HclkFreq/8000*8 cycle of Hclk ie. every 1ms
 
-
-   __SYSCFG_CLK_ENABLE();
+   __SYSCFG_CLK_ENABLE();  
    // System Configuration Clock
    // The system configuration controller is mainly used to remap the memory accessible in the
    // code area, and manage the external interrupt line connection to the GPIOs.
 
+
+  // NOTE: RTC configuration is done separately, refer to LBF_LSE_RTC_Cfg.c
+
+/*
+    HClkFqcy = HAL_RCC_GetHCLKFreq();  //NEEDED
+    APB1ClkFqcy = HAL_RCC_GetPCLK1Freq(); //NEEDED
+    APB2ClkFqcy = HAL_RCC_GetPCLK2Freq(); // NEEDED
+*/
 }
 
 

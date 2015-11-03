@@ -295,43 +295,18 @@ void SysTick_Handler(void)
 /*                 STM32 Peripherals Interrupt Handlers                       */
 /******************************************************************************/
 
-/*******************************************************************************
-* Function Name  : USB_HP_CAN1_TX_IRQHandler
-* Description    : This function handles USB High Priority or CAN TX interrupts 
-*                  requests.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void USB_HP_CAN1_TX_IRQHandler(void)
-{
 
+/**
+  * @brief  This function handles USB-On-The-Go FS global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void OTG_FS_IRQHandler(void)
+{
+  HAL_PCD_IRQHandler(&hpcd);
 }
 
-/*******************************************************************************
-* Function Name  : USB_IRQHandler
-* Description    : This function handles USB Low Priority interrupts
-*                  requests.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void USB_LP_IRQHandler(void)
-{
-      HAL_PCD_IRQHandler(&hpcd);
-}
 
-/*******************************************************************************
-* Function Name  : USB_FS_WKUP_IRQHandler
-* Description    : This function handles USB WakeUp interrupt request.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void USB_FS_WKUP_IRQHandler(void)
-{
-
-}
 
 
 /**===========================================================================*/

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_dac.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   DAC HAL module driver.
   *         This file provides firmware functions to manage the following 
   *         functionalities of the Digital to Analog Converter (DAC) peripheral:
@@ -68,7 +68,7 @@
       =====================
       [..] 
       When a DAC channel is used (ex channel1 on PA4) and the other is not 
-      (ex channel1 on PA5 is configured in Analog and disabled).
+      (ex channel2 on PA5 is configured in Analog and disabled).
       Channel1 may disturb channel2 as coupling effect.
       Note that there is no coupling on channel2 as soon as channel2 is turned on.
       Coupling on adjacent channel could be avoided as follows:

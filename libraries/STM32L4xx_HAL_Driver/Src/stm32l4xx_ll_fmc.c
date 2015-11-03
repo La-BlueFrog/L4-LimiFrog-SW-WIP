@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_ll_fmc.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   FMC Low Layer HAL module driver. 
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Flexible Memory Controller (FMC) peripheral memories:
@@ -741,7 +741,7 @@ HAL_StatusTypeDef FMC_NAND_GetECC(FMC_NAND_TypeDef *Device, uint32_t *ECCval, ui
   * @}
   */
 
-#endif /* HAL_FMC_MODULE_ENABLED */
+#endif /* HAL_SRAM_MODULE_ENABLED || HAL_NOR_MODULE_ENABLED || HAL_NAND_MODULE_ENABLED */
 
 /**
   * @}

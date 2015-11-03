@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_uart.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   UART HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Universal Asynchronous Receiver Transmitter Peripheral (UART).
@@ -800,9 +800,6 @@ HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData
     {
       huart->State = HAL_UART_STATE_BUSY_TX;
     }
-
-    /* Enable the UART Error Interrupt: (Frame error, noise error, overrun error) */
-    __HAL_UART_ENABLE_IT(huart, UART_IT_ERR);
 
     /* Process Unlocked */
     __HAL_UNLOCK(huart);
@@ -1621,7 +1618,7 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
     case UART_CLOCKSOURCE_LSE:
         usartdiv = (uint16_t)(UART_DIV_SAMPLING8(LSE_VALUE, huart->Init.BaudRate));
       break;
-      case UART_CLOCKSOURCE_UNDEFINED:
+    case UART_CLOCKSOURCE_UNDEFINED:
     default:
         ret = HAL_ERROR;
       break;
@@ -1650,7 +1647,7 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
     case UART_CLOCKSOURCE_LSE:
         huart->Instance->BRR = (uint16_t)(UART_DIV_SAMPLING16(LSE_VALUE, huart->Init.BaudRate));
       break;
-      case UART_CLOCKSOURCE_UNDEFINED:
+    case UART_CLOCKSOURCE_UNDEFINED:
     default:
         ret = HAL_ERROR;
       break;

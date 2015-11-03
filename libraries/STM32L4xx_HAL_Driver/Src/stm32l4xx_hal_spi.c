@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_spi.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   SPI HAL module driver.
   *          This file provides firmware functions to manage the following
   *          functionalities of the Serial Peripheral Interface (SPI) peripheral:
@@ -2121,7 +2121,7 @@ static void SPI_2linesRxISR_8BIT(struct __SPI_HandleTypeDef *hspi)
     *((uint16_t*)hspi->pRxBuffPtr) = hspi->Instance->DR;
     hspi->pRxBuffPtr += sizeof(uint16_t);
     hspi->RxXferCount -= 2;
-    if(hspi->RxXferCount == 1)
+    if(hspi->RxXferCount == 1) 
     {
       /* set fiforxthresold according the reception data length: 8bit */
       SET_BIT(hspi->Instance->CR2, SPI_RXFIFO_THRESHOLD);
@@ -2139,6 +2139,7 @@ static void SPI_2linesRxISR_8BIT(struct __SPI_HandleTypeDef *hspi)
   {
     if(hspi->Init.CRCCalculation == SPI_CRCCALCULATION_ENABLE)
     {
+      SET_BIT(hspi->Instance->CR2, SPI_RXFIFO_THRESHOLD);
       hspi->RxISR =  SPI_2linesRxISR_8BITCRC;
       return;
     }

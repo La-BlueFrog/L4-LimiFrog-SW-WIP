@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_comp.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of COMP HAL module.
   ******************************************************************************
   * @attention
@@ -127,14 +127,14 @@ typedef struct
 /** @defgroup COMP_InvertingInput COMP Inverting Input
   * @{
   */
-#define COMP_INVERTINGINPUT_1_4VREFINT     ((uint32_t)0x00000000)                  /*!< 1/4 VREFINT connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_1_2VREFINT     COMP_CSR_INMSEL_0                       /*!< 1/2 VREFINT connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_3_4VREFINT     COMP_CSR_INMSEL_1                       /*!< 3/4 VREFINT connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_VREFINT        (COMP_CSR_INMSEL_1 | COMP_CSR_INMSEL_0) /*!< VREFINT connected to comparator1 inverting input */
-#define COMP_INVERTINGINPUT_DAC1           COMP_CSR_INMSEL_2                       /*!< DAC_OUT1 connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_DAC2           (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_0) /*!< DAC_OUT2 connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_IO1            (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1) /*!< I/O1 connected to comparator inverting input */
-#define COMP_INVERTINGINPUT_IO2            COMP_CSR_INMSEL                         /*!< I/O2 connected to comparator inverting input */
+#define COMP_INVERTINGINPUT_1_4VREFINT     ((uint32_t)0x00000000)                  /*!< 1/4 VREFINT connected to comparator inverting input (minus) */
+#define COMP_INVERTINGINPUT_1_2VREFINT     COMP_CSR_INMSEL_0                       /*!< 1/2 VREFINT connected to comparator inverting input (minus) */
+#define COMP_INVERTINGINPUT_3_4VREFINT     COMP_CSR_INMSEL_1                       /*!< 3/4 VREFINT connected to comparator inverting input (minus) */
+#define COMP_INVERTINGINPUT_VREFINT        (COMP_CSR_INMSEL_1 | COMP_CSR_INMSEL_0) /*!< VREFINT connected to comparator1 inverting input (minus) */
+#define COMP_INVERTINGINPUT_DAC1           COMP_CSR_INMSEL_2                       /*!< DAC_OUT1 connected to comparator inverting input (minus) */
+#define COMP_INVERTINGINPUT_DAC2           (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_0) /*!< DAC_OUT2 connected to comparator inverting input (minus) */
+#define COMP_INVERTINGINPUT_IO1            (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1) /*!< IO1 connected to comparator inverting input (minus) */
+#define COMP_INVERTINGINPUT_IO2            COMP_CSR_INMSEL                         /*!< IO2 connected to comparator inverting input (minus) */
 /**
   * @}
   */
@@ -142,8 +142,8 @@ typedef struct
 /** @defgroup COMP_NonInvertingInput COMP NonInverting Input
   * @{
   */
-#define COMP_NONINVERTINGINPUT_IO1         ((uint32_t)0x00000000) /*!< I/O1 connected to comparator non inverting input */
-#define COMP_NONINVERTINGINPUT_IO2         COMP_CSR_INPSEL        /*!< I/O2 connected to comparator non inverting input */
+#define COMP_NONINVERTINGINPUT_IO1         ((uint32_t)0x00000000) /*!< IO1 connected to comparator non inverting input (plus) */
+#define COMP_NONINVERTINGINPUT_IO2         COMP_CSR_INPSEL_0      /*!< IO2 connected to comparator non inverting input (plus) */
 /**
   * @}
   */
@@ -252,28 +252,28 @@ typedef struct
   */
 
 /** @brief  Reset COMP handle state.
-  * @param  __HANDLE__: COMP handle.
+  * @param  __HANDLE__  COMP handle.
   * @retval None
   */
 #define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__)  ((__HANDLE__)->State = HAL_COMP_STATE_RESET)
 
 /**
   * @brief  Enable the specified comparator.
-  * @param  __HANDLE__: COMP handle.
+  * @param  __HANDLE__  COMP handle.
   * @retval None
   */
 #define __HAL_COMP_ENABLE(__HANDLE__)                 SET_BIT((__HANDLE__)->Instance->CSR, COMP_CSR_EN)
 
 /**
   * @brief  Disable the specified comparator.
-  * @param  __HANDLE__: COMP handle.
+  * @param  __HANDLE__  COMP handle.
   * @retval None
   */
 #define __HAL_COMP_DISABLE(__HANDLE__)                CLEAR_BIT((__HANDLE__)->Instance->CSR, COMP_CSR_EN)
 
 /**
   * @brief  Lock the specified comparator configuration.
-  * @param  __HANDLE__: COMP handle.
+  * @param  __HANDLE__  COMP handle.
   * @retval None
   */
 #define __HAL_COMP_LOCK(__HANDLE__)                   SET_BIT((__HANDLE__)->Instance->CSR, COMP_CSR_LOCK)
@@ -447,10 +447,10 @@ typedef struct
 #define __HAL_COMP_COMP2_EXTI_CLEAR_FLAG()            WRITE_REG(EXTI->PR1, COMP_EXTI_LINE_COMP2)
 
 /** @brief  Check whether the specified COMP flag is set or not.
-  * @param  __HANDLE__: specifies the COMP Handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__  specifies the COMP Handle.
+  * @param  __FLAG__  specifies the flag to check.
   *        This parameter can be one of the following values:
-  *            @arg COMP_FLAG_LOCK:  lock flag
+  *            @arg @ref COMP_FLAG_LOCK   lock flag
   * @retval The new state of __FLAG__ (TRUE or FALSE).
   */
 #define __HAL_COMP_GET_FLAG(__HANDLE__, __FLAG__)     (((__HANDLE__)->Instance->CSR & (__FLAG__)) == (__FLAG__))   
@@ -541,7 +541,7 @@ HAL_COMP_StateTypeDef HAL_COMP_GetState(COMP_HandleTypeDef *hcomp);
   */
 /**
   * @brief  Get the specified EXTI line for a comparator instance.
-  * @param  __INSTANCE__: specifies the COMP instance.
+  * @param  __INSTANCE__  specifies the COMP instance.
   * @retval value of @ref COMP_ExtiLine
   */
 #define COMP_GET_EXTI_LINE(__INSTANCE__)             (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1 : \

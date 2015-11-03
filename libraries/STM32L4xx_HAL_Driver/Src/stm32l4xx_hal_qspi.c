@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_qspi.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   QSPI HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the QuadSPI interface (QSPI).
@@ -509,8 +509,8 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
     /* Check if the automatic poll mode stop is activated */
     if(READ_BIT(hqspi->Instance->CR, QUADSPI_CR_APMS) != 0)
     {
-      /* Disable the QSPI FIFO Threshold, Transfer Error and Status Match Interrupts */
-      __HAL_QSPI_DISABLE_IT(hqspi, QSPI_IT_SM | QSPI_IT_FT | QSPI_IT_TE);
+      /* Disable the QSPI Transfer Error and Status Match Interrupts */
+      __HAL_QSPI_DISABLE_IT(hqspi, (QSPI_IT_SM | QSPI_IT_TE));
 
       /* Change state of QSPI */
       hqspi->State = HAL_QSPI_STATE_READY;
@@ -1325,15 +1325,15 @@ HAL_StatusTypeDef HAL_QSPI_AutoPolling_IT(QSPI_HandleTypeDef *hqspi, QSPI_Comman
       MODIFY_REG(hqspi->Instance->CR, (QUADSPI_CR_PMM | QUADSPI_CR_APMS), 
                (cfg->MatchMode | cfg->AutomaticStop));
       
-      /* Call the configuration function */
-      cmd->NbData = cfg->StatusBytesSize;
-      QSPI_Config(hqspi, cmd, QSPI_FUNCTIONAL_MODE_AUTO_POLLING);
-      
       /* Clear interrupt */
       __HAL_QSPI_CLEAR_FLAG(hqspi, QSPI_FLAG_TE | QSPI_FLAG_SM);
 
-      /* Enable the QSPI Transfer Error, FIFO threshold and status match Interrupt */
-      __HAL_QSPI_ENABLE_IT(hqspi, (QSPI_IT_FT | QSPI_IT_SM | QSPI_IT_TE));
+      /* Enable the QSPI Transfer Error and status match Interrupt */
+      __HAL_QSPI_ENABLE_IT(hqspi, (QSPI_IT_SM | QSPI_IT_TE));
+
+      /* Call the configuration function */
+      cmd->NbData = cfg->StatusBytesSize;
+      QSPI_Config(hqspi, cmd, QSPI_FUNCTIONAL_MODE_AUTO_POLLING);
     }
   }
   else

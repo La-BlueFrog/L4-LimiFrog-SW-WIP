@@ -46,23 +46,42 @@
 #define USBD_DEBUG_LEVEL                      0
 
 /* MSC Class Config */
-#define MSC_MEDIA_PACKET                      512
+#define MSC_MEDIA_PACKET                      512  // formerly, for L1
+//#define MSC_MEDIA_PACKET                      8192  // NEW for L4
 
 /* Exported macro ------------------------------------------------------------*/
 /* Memory management macros */   
 
+// L4 Cube Lib did this :
+/*
+#define USBD_malloc               malloc
+#define USBD_free                 free
+#define USBD_memset               memset
+#define USBD_memcpy               memcpy
+*/  
+
+// Get back to solution that was used with L1 :
 /* For footprint reasons and since only one allocation is handled in the MSC class 
    driver, the malloc/free is changed into a static allocation method */
 
 void *USBD_static_malloc(uint32_t size);
 void USBD_static_free(void *p);
+// These functions must be described in usbd_conf.c
 
-#define MAX_STATIC_ALLOC_SIZE     155 /*MSC Class Driver Structure size*/
+#define MAX_STATIC_ALLOC_SIZE     155  // MSC Class Driver Structure size
+//#define MAX_STATIC_ALLOC_SIZE     2560  // MSC Class Driver Structure size - ATTEMPT TO INCREASE...
 
+/*
+#define USBD_malloc               malloc
+#define USBD_free                 free
+*/
 #define USBD_malloc               (uint32_t *)USBD_static_malloc
 #define USBD_free                 USBD_static_free
-#define USBD_memset               /* Not used */
-#define USBD_memcpy               /* Not used */
+
+#define USBD_memset               // Not used
+#define USBD_memcpy               // Not used 
+
+
 
     
 /* DEBUG macros */  

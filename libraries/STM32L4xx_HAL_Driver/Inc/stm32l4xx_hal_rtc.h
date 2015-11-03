@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_rtc.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    26-June-2015
+  * @version V1.1.0
+  * @date    16-September-2015
   * @brief   Header file of RTC HAL module.
   ******************************************************************************
   * @attention
@@ -834,7 +834,7 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
   */
 
 /* Private functions ---------------------------------------------------------*/
-/** @defgroup RTC_Private_Functions RTC Private Functions
+/** @addtogroup RTC_Private_Functions
   * @{
   */
 

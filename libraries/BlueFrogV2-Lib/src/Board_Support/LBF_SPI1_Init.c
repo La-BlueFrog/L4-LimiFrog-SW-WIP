@@ -47,8 +47,8 @@ void LBF_SPI1_Init(void)
 
   hspi1.Init.NSS = SPI_NSS_SOFT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2; 
-	//leads to baudrate = Fpclk/2 (pclk = periph clock = APB2CLK for SPI1)
-	// TO BE UPDATED ACCORDING TO APB2 CLock setting in LBF_SysClkConfig.c
+	// SPI1 is on APB2 in STM32L4 which is clocked at 20MHz
+	// Leads to baudrate = APB2CLK/2 = 10 Mbit/s
 	// Caution: OLED supports up to 16Mb/s SPI max
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLED;
